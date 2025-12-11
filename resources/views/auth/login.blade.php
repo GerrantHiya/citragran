@@ -284,7 +284,7 @@
         </p>
 
         <p style="text-align: center; color: #475569; margin-top: 1rem; font-size: 0.75rem;">
-            &copy; {{ date('Y') }} <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> (ghiya.my.id)
+            {{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.
         </p>
     </div>
 </body>

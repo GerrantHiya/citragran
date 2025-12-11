@@ -506,7 +506,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; {{ date('Y') }} <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> (ghiya.my.id)</p>
+        <p>{{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.</p>
     </footer>
 </body>
 </html>
