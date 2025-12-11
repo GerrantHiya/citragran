@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Resident;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -57,9 +59,17 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // Check for duplicate email first with friendly message
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser) {
+            return back()->withErrors([
+                'email' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau login dengan akun yang sudah ada.',
+            ])->withInput($request->except('password', 'password_confirmation'));
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|min:8|confirmed',
         ]);
@@ -87,9 +97,17 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
+        // Check for duplicate email
+        $existingUser = User::where('email', $request->email)->where('id', '!=', $user->id)->first();
+        if ($existingUser) {
+            return back()->withErrors([
+                'email' => 'Email ini sudah digunakan oleh pengguna lain.',
+            ])->withInput();
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
         ]);
 

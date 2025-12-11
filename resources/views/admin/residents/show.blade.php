@@ -89,6 +89,66 @@
         </div>
     </div>
 
+    <!-- Account Linking Card -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><i class="bi bi-person-badge"></i> Akun Login</h3>
+        </div>
+        <div class="card-body">
+            @if($resident->user)
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--success), #059669); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="bi bi-check-lg" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <p style="margin: 0; color: var(--success); font-weight: 600;">Terhubung</p>
+                            <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">{{ $resident->user->email }}</p>
+                        </div>
+                    </div>
+                    <form action="{{ route('admin.residents.unlink-user', $resident) }}" method="POST" onsubmit="return confirm('Yakin ingin memutus hubungan akun ini?')">
+                        @csrf
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-x-lg"></i> Putuskan
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 50px; height: 50px; background: rgba(245, 158, 11, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--warning);">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <p style="margin: 0; color: var(--warning); font-weight: 600;">Belum Terhubung</p>
+                        <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">Warga ini belum memiliki akun login</p>
+                    </div>
+                </div>
+
+                @if($unlinkedUsers->count() > 0)
+                    <form action="{{ route('admin.residents.link-user', $resident) }}" method="POST" style="display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap;">
+                        @csrf
+                        <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                            <label class="form-label">Hubungkan dengan Akun</label>
+                            <select name="user_id" class="form-control" required>
+                                <option value="">-- Pilih Akun --</option>
+                                @foreach($unlinkedUsers as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-link-45deg"></i> Hubungkan
+                        </button>
+                    </form>
+                @else
+                    <p style="color: var(--gray-500); font-size: 0.875rem; margin: 0;">
+                        <i class="bi bi-info-circle"></i> Tidak ada akun warga yang belum terhubung.
+                    </p>
+                @endif
+            @endif
+        </div>
+    </div>
+
     <div class="grid grid-2">
         <!-- Bills History -->
         <div class="card">

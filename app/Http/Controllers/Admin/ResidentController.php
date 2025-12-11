@@ -29,12 +29,22 @@ class ResidentController extends Controller
 
         $residents = $query->orderBy('block_number')->paginate(15);
 
-        return view('admin.residents.index', compact('residents'));
+        // Get unlinked users (users with role 'resident' but no resident data linked)
+        $unlinkedUsers = User::where('role', 'resident')
+            ->whereDoesntHave('resident')
+            ->get();
+
+        return view('admin.residents.index', compact('residents', 'unlinkedUsers'));
     }
 
     public function create()
     {
-        return view('admin.residents.create');
+        // Get unlinked users for linking option
+        $unlinkedUsers = User::where('role', 'resident')
+            ->whereDoesntHave('resident')
+            ->get();
+
+        return view('admin.residents.create', compact('unlinkedUsers'));
     }
 
     public function store(Request $request)
@@ -47,6 +57,7 @@ class ResidentController extends Controller
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
             'move_in_date' => 'nullable|date',
+            'link_user_id' => 'nullable|exists:users,id',
             'create_account' => 'nullable|boolean',
             'password' => 'nullable|required_if:create_account,1|min:8',
         ]);
@@ -55,8 +66,23 @@ class ResidentController extends Controller
             'name', 'block_number', 'phone', 'whatsapp', 'email', 'address', 'move_in_date'
         ]));
 
-        // Create user account if requested
+        // Link existing user account if selected
+        if ($request->link_user_id) {
+            $resident->update(['user_id' => $request->link_user_id]);
+            return redirect()->route('admin.residents.index')
+                ->with('success', 'Data warga berhasil ditambahkan dan dihubungkan dengan akun yang ada!');
+        }
+
+        // Create new user account if requested
         if ($request->create_account && $request->email) {
+            // Check if email already exists
+            $existingUser = User::where('email', $request->email)->first();
+            if ($existingUser) {
+                return redirect()->route('admin.residents.index')
+                    ->with('success', 'Data warga berhasil ditambahkan!')
+                    ->with('error', 'Namun akun tidak dapat dibuat karena email sudah terdaftar.');
+            }
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -80,12 +106,22 @@ class ResidentController extends Controller
             $q->latest();
         }]);
 
-        return view('admin.residents.show', compact('resident'));
+        // Get unlinked users for linking option
+        $unlinkedUsers = User::where('role', 'resident')
+            ->whereDoesntHave('resident')
+            ->get();
+
+        return view('admin.residents.show', compact('resident', 'unlinkedUsers'));
     }
 
     public function edit(Resident $resident)
     {
-        return view('admin.residents.edit', compact('resident'));
+        // Get unlinked users for linking option
+        $unlinkedUsers = User::where('role', 'resident')
+            ->whereDoesntHave('resident')
+            ->get();
+
+        return view('admin.residents.edit', compact('resident', 'unlinkedUsers'));
     }
 
     public function update(Request $request, Resident $resident)
@@ -120,9 +156,45 @@ class ResidentController extends Controller
 
     public function destroy(Resident $resident)
     {
-        $resident->delete();
+        // Unlink user account before deleting (don't delete the user)
+        if ($resident->user_id) {
+            $resident->update(['user_id' => null]);
+        }
+
+        // Force delete the block_number to allow reuse
+        $resident->forceDelete();
 
         return redirect()->route('admin.residents.index')
             ->with('success', 'Data warga berhasil dihapus!');
+    }
+
+    /**
+     * Link an existing user account to a resident
+     */
+    public function linkUser(Request $request, Resident $resident)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        // Check if user is already linked to another resident
+        $existingLink = Resident::where('user_id', $request->user_id)->first();
+        if ($existingLink) {
+            return back()->with('error', 'Akun ini sudah terhubung dengan warga lain!');
+        }
+
+        $resident->update(['user_id' => $request->user_id]);
+
+        return back()->with('success', 'Akun berhasil dihubungkan dengan data warga!');
+    }
+
+    /**
+     * Unlink user account from resident
+     */
+    public function unlinkUser(Resident $resident)
+    {
+        $resident->update(['user_id' => null]);
+
+        return back()->with('success', 'Akun berhasil diputus dari data warga!');
     }
 }

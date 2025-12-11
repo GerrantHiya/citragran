@@ -46,6 +46,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Residents
+    Route::post('residents/{resident}/link-user', [ResidentController::class, 'linkUser'])->name('residents.link-user');
+    Route::post('residents/{resident}/unlink-user', [ResidentController::class, 'unlinkUser'])->name('residents.unlink-user');
     Route::resource('residents', ResidentController::class);
 
     // IPL Bills

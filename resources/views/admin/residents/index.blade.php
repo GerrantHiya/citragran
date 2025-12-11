@@ -12,6 +12,26 @@
         </a>
     </div>
     <div class="card-body">
+        @if(isset($unlinkedUsers) && $unlinkedUsers->count() > 0)
+            <div class="alert alert-warning" style="margin-bottom: 1.5rem;">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>
+                    <strong>{{ $unlinkedUsers->count() }} akun warga belum terhubung dengan data warga.</strong>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+                        Akun yang mendaftar sendiri perlu dihubungkan dengan data warga. Klik "Lihat" pada warga terkait untuk menghubungkan akun.
+                    </p>
+                    <div style="margin-top: 0.5rem; font-size: 0.875rem;">
+                        @foreach($unlinkedUsers->take(3) as $user)
+                            <span class="badge badge-warning" style="margin-right: 0.25rem;">{{ $user->name }} ({{ $user->email }})</span>
+                        @endforeach
+                        @if($unlinkedUsers->count() > 3)
+                            <span style="color: var(--gray-600);">dan {{ $unlinkedUsers->count() - 3 }} lainnya...</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Filter -->
         <form action="{{ route('admin.residents.index') }}" method="GET" style="margin-bottom: 1.5rem;">
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
