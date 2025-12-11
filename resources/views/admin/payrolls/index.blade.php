@@ -32,14 +32,11 @@
                         <td class="amount">Rp {{ number_format($payroll->total_amount, 0, ',', '.') }}</td>
                         <td>
                             @switch($payroll->status)
-                                @case('pending')
-                                    <span class="badge badge-warning">Pending</span>
-                                    @break
-                                @case('approved')
-                                    <span class="badge badge-info">Disetujui</span>
+                                @case('draft')
+                                    <span class="badge badge-warning">Belum Dibayar</span>
                                     @break
                                 @case('paid')
-                                    <span class="badge badge-success">Dibayar</span>
+                                    <span class="badge badge-success">Sudah Dibayar</span>
                                     @break
                                 @case('cancelled')
                                     <span class="badge badge-danger">Dibatalkan</span>

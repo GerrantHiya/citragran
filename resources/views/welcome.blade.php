@@ -506,7 +506,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; {{ date('Y') }} Citra Gran Management. All rights reserved.</p>
+        <p>&copy; {{ date('Y') }} <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> (ghiya.my.id)</p>
     </footer>
 </body>
 </html>

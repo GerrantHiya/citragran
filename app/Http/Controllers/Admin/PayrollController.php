@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeDebt;
 use App\Models\Payroll;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PayrollController extends Controller
 {
@@ -87,7 +88,7 @@ class PayrollController extends Controller
 
     public function show(Payroll $payroll)
     {
-        $payroll->load(['employee', 'approvedBy', 'debtPayments.debt']);
+        $payroll->load(['employee', 'paidBy', 'debtPayments.debt']);
 
         return view('admin.payrolls.show', compact('payroll'));
     }
@@ -136,29 +137,19 @@ class PayrollController extends Controller
             ->with('success', 'Data penggajian berhasil diperbarui!');
     }
 
-    public function approve(Payroll $payroll)
-    {
-        if ($payroll->status !== 'draft') {
-            return back()->with('error', 'Hanya penggajian draft yang dapat disetujui!');
-        }
-
-        $payroll->update([
-            'status' => 'approved',
-            'approved_by' => auth()->id(),
-        ]);
-
-        return redirect()->route('admin.payrolls.show', $payroll)
-            ->with('success', 'Penggajian berhasil disetujui!');
-    }
-
     public function pay(Request $request, Payroll $payroll)
     {
-        if ($payroll->status !== 'approved') {
-            return back()->with('error', 'Hanya penggajian yang disetujui yang dapat dibayar!');
+        if ($payroll->status === 'paid') {
+            return back()->with('error', 'Penggajian ini sudah dibayar!');
         }
 
         $request->validate([
             'payment_date' => 'required|date',
+            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'payment_proof.required' => 'Bukti pembayaran wajib diupload!',
+            'payment_proof.mimes' => 'Bukti pembayaran harus berupa file JPG, PNG, atau PDF!',
+            'payment_proof.max' => 'Ukuran file maksimal 5MB!',
         ]);
 
         // Process debt deduction if any
@@ -175,9 +166,14 @@ class PayrollController extends Controller
             }
         }
 
+        // Upload payment proof
+        $proofPath = $request->file('payment_proof')->store('payroll-proofs', 'public');
+
         $payroll->update([
             'status' => 'paid',
             'payment_date' => $request->payment_date,
+            'payment_proof' => $proofPath,
+            'paid_by' => auth()->id(),
         ]);
 
         return redirect()->route('admin.payrolls.show', $payroll)
@@ -200,6 +196,11 @@ class PayrollController extends Controller
     {
         if ($payroll->status === 'paid') {
             return back()->with('error', 'Penggajian yang sudah dibayar tidak dapat dihapus!');
+        }
+
+        // Delete payment proof if exists
+        if ($payroll->payment_proof) {
+            Storage::disk('public')->delete($payroll->payment_proof);
         }
 
         $payroll->delete();

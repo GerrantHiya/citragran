@@ -56,5 +56,11 @@ class DatabaseSeeder extends Seeder
         foreach ($expenseCategories as $category) {
             ExpenseCategory::create($category);
         }
+
+        // Call other seeders
+        $this->call([
+            ResidentSeeder::class,
+            EmployeeSeeder::class,
+        ]);
     }
 }

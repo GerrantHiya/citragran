@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('id_number')->nullable(); // KTP
             $table->date('birth_date')->nullable();
-            $table->date('join_date');
+            $table->date('join_date')->nullable();
             $table->date('end_date')->nullable();
             $table->enum('salary_type', ['daily', 'weekly', 'monthly'])->default('monthly');
             $table->decimal('base_salary', 12, 2)->default(0);

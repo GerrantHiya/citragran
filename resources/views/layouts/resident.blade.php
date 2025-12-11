@@ -632,6 +632,13 @@
         @endif
 
         @yield('content')
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 2rem 1rem 1rem; margin-top: 2rem; border-top: 1px solid rgba(99, 102, 241, 0.1);">
+            <p style="color: var(--gray-500); font-size: 0.875rem; margin: 0;">
+                &copy; {{ date('Y') }} <a href="https://ghiya.my.id" target="_blank" style="color: var(--primary-light); text-decoration: none;">Gerrant Hiya</a> (ghiya.my.id)
+            </p>
+        </footer>
     </main>
 
     <!-- Mobile Navigation -->

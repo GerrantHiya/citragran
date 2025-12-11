@@ -25,8 +25,9 @@ return new class extends Migration
             $table->decimal('debt_deduction', 12, 2)->default(0);
             $table->decimal('total_amount', 12, 2)->default(0);
             $table->date('payment_date')->nullable();
-            $table->enum('status', ['draft', 'approved', 'paid', 'cancelled'])->default('draft');
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('payment_proof')->nullable(); // Foto bukti pembayaran
+            $table->enum('status', ['draft', 'paid', 'cancelled'])->default('draft');
+            $table->foreignId('paid_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

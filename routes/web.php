@@ -65,7 +65,6 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
     // Payrolls
     Route::get('payrolls/report', [PayrollController::class, 'report'])->name('payrolls.report');
-    Route::post('payrolls/{payroll}/approve', [PayrollController::class, 'approve'])->name('payrolls.approve');
     Route::post('payrolls/{payroll}/pay', [PayrollController::class, 'pay'])->name('payrolls.pay');
     Route::post('payrolls/{payroll}/cancel', [PayrollController::class, 'cancel'])->name('payrolls.cancel');
     Route::resource('payrolls', PayrollController::class);

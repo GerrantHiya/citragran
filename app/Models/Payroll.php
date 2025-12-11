@@ -23,8 +23,9 @@ class Payroll extends Model
         'debt_deduction',
         'total_amount',
         'payment_date',
+        'payment_proof',
         'status',
-        'approved_by',
+        'paid_by',
         'notes',
     ];
 
@@ -41,9 +42,8 @@ class Payroll extends Model
     ];
 
     const STATUSES = [
-        'draft' => 'Draft',
-        'approved' => 'Disetujui',
-        'paid' => 'Dibayar',
+        'draft' => 'Belum Dibayar',
+        'paid' => 'Sudah Dibayar',
         'cancelled' => 'Dibatalkan',
     ];
 
@@ -52,9 +52,9 @@ class Payroll extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function approvedBy()
+    public function paidBy()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'paid_by');
     }
 
     public function debtPayments()

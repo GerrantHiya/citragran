@@ -282,6 +282,10 @@
                 <i class="bi bi-arrow-left"></i> Kembali ke Beranda
             </a>
         </p>
+
+        <p style="text-align: center; color: #475569; margin-top: 1rem; font-size: 0.75rem;">
+            &copy; {{ date('Y') }} <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> (ghiya.my.id)
+        </p>
     </div>
 </body>
 </html>
