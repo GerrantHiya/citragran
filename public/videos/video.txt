@@ -1,0 +1,2 @@
+Letakkan file video.mp4 di folder ini (public/videos/)
+Rename menjadi: video.mp4

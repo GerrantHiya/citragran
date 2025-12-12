@@ -142,13 +142,13 @@
             <p style="margin-top: 30px;">
                 Terima kasih atas perhatian Bapak/Ibu.<br><br>
                 Hormat kami,<br>
-                <strong>Manajemen Perumahan Citra Gran</strong>
+                <strong>Manajemen Perumahan</strong>
             </p>
         </div>
         
         <div class="footer">
-            <p>Email ini dikirim secara otomatis oleh Sistem Manajemen Perumahan Citra Gran.</p>
-            <p>{{ date('Y') }} &copy; Citra Gran</p>
+            <p>Email ini dikirim secara otomatis oleh Sistem Manajemen Perumahan</p>
+            <p>{{ date('Y') }} &copy; XTraDTechnology</p>
         </div>
     </div>
 </body>

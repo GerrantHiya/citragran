@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -48,13 +48,13 @@
             font-size: 2.5rem;
             color: white;
             margin-bottom: 1.5rem;
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
         }
 
         .login-title {
             font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff, #94a3b8);
+            background: linear-gradient(135deg, #1e293b, #475569);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
@@ -65,12 +65,12 @@
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            border: 1px solid #e2e8f0;
             border-radius: 24px;
             padding: 2.5rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
@@ -81,7 +81,7 @@
             display: block;
             font-size: 0.875rem;
             font-weight: 500;
-            color: #cbd5e1;
+            color: #475569;
             margin-bottom: 0.5rem;
         }
 
@@ -89,10 +89,10 @@
             width: 100%;
             padding: 0.875rem 1.25rem;
             font-size: 1rem;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            color: #fff;
+            color: #1e293b;
             transition: all 0.3s ease;
             font-family: inherit;
         }
@@ -100,11 +100,11 @@
         .form-control:focus {
             outline: none;
             border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .form-control::placeholder {
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .input-group {
@@ -116,7 +116,7 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #64748b;
+            color: #94a3b8;
             font-size: 1.25rem;
         }
 
@@ -128,7 +128,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: #94a3b8;
+            color: #64748b;
             font-size: 0.875rem;
         }
 
@@ -157,12 +157,12 @@
         .btn-primary {
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
         }
 
         .alert {
@@ -175,9 +175,9 @@
         }
 
         .alert-danger {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #dc2626;
         }
 
         .login-footer {
@@ -187,14 +187,14 @@
         }
 
         .login-footer a {
-            color: #818cf8;
+            color: #6366f1;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
         }
 
         .login-footer a:hover {
-            color: #a5b4fc;
+            color: #4f46e5;
         }
 
         .divider {
@@ -202,7 +202,7 @@
             align-items: center;
             gap: 1rem;
             margin: 1.5rem 0;
-            color: #475569;
+            color: #94a3b8;
             font-size: 0.875rem;
         }
 
@@ -210,7 +210,7 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: rgba(99, 102, 241, 0.2);
+            background: #e2e8f0;
         }
     </style>
 </head>
@@ -225,7 +225,7 @@
         </div>
 
         <div class="login-card">
-            <h2 style="color: #fff; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Masuk ke Akun Anda</h2>
+            <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Masuk ke Akun Anda</h2>
 
             @if($errors->any())
                 <div class="alert alert-danger">
@@ -277,14 +277,14 @@
             </div>
         </div>
 
-        <p style="text-align: center; color: #475569; margin-top: 2rem; font-size: 0.875rem;">
-            <a href="{{ route('home') }}" style="color: #94a3b8; text-decoration: none;">
+        <p style="text-align: center; color: #64748b; margin-top: 2rem; font-size: 0.875rem;">
+            <a href="{{ route('home') }}" style="color: #64748b; text-decoration: none;">
                 <i class="bi bi-arrow-left"></i> Kembali ke Beranda
             </a>
         </p>
 
-        <p style="text-align: center; color: #475569; margin-top: 1rem; font-size: 0.75rem;">
-            {{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.
+        <p style="text-align: center; color: #94a3b8; margin-top: 1rem; font-size: 0.75rem;">
+            {{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #6366f1; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.
         </p>
     </div>
 </body>

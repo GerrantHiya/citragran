@@ -20,9 +20,9 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
             min-height: 100vh;
-            color: #e2e8f0;
+            color: #1e293b;
         }
 
         /* Header */
@@ -35,10 +35,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             z-index: 1000;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .logo {
@@ -63,7 +64,7 @@
         .logo-text {
             font-weight: 700;
             font-size: 1.25rem;
-            background: linear-gradient(135deg, #818cf8, #0ea5e9);
+            background: linear-gradient(135deg, #6366f1, #0ea5e9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -76,7 +77,7 @@
 
         .nav-link {
             padding: 0.625rem 1.25rem;
-            color: #94a3b8;
+            color: #64748b;
             text-decoration: none;
             font-weight: 500;
             border-radius: 10px;
@@ -84,7 +85,7 @@
         }
 
         .nav-link:hover {
-            color: #fff;
+            color: #1e293b;
             background: rgba(99, 102, 241, 0.1);
         }
 
@@ -115,7 +116,7 @@
 
         .btn-secondary {
             background: rgba(99, 102, 241, 0.1);
-            color: #818cf8;
+            color: #6366f1;
             border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
@@ -140,7 +141,7 @@
             transform: translate(-50%, -50%);
             width: 800px;
             height: 800px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -160,7 +161,7 @@
             background: rgba(99, 102, 241, 0.1);
             border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 50px;
-            color: #818cf8;
+            color: #6366f1;
             font-size: 0.875rem;
             font-weight: 500;
             margin-bottom: 1.5rem;
@@ -171,7 +172,7 @@
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -182,12 +183,20 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .hero p {
-            font-size: 1.25rem;
-            color: #94a3b8;
-            max-width: 600px;
+        /* Video Container */
+        .hero-video {
+            max-width: 800px;
             margin: 0 auto 2.5rem;
-            line-height: 1.7;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+        }
+
+        .hero-video video {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .hero-buttons {
@@ -201,7 +210,7 @@
         /* Features */
         .features {
             padding: 80px 2rem;
-            background: rgba(15, 23, 42, 0.5);
+            background: #ffffff;
         }
 
         .features-container {
@@ -217,12 +226,12 @@
         .section-title h2 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #fff;
+            color: #1e293b;
             margin-bottom: 1rem;
         }
 
         .section-title p {
-            color: #94a3b8;
+            color: #64748b;
             font-size: 1.125rem;
         }
 
@@ -233,47 +242,49 @@
         }
 
         .feature-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 20px;
             padding: 2rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
             border-color: rgba(99, 102, 241, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
         }
 
         .feature-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(14, 165, 233, 0.2));
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(14, 165, 233, 0.15));
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.75rem;
-            color: #818cf8;
+            color: #6366f1;
             margin-bottom: 1.5rem;
         }
 
         .feature-card h3 {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #fff;
+            color: #1e293b;
             margin-bottom: 0.75rem;
         }
 
         .feature-card p {
-            color: #94a3b8;
+            color: #64748b;
             line-height: 1.6;
         }
 
         /* Announcements */
         .announcements {
             padding: 80px 2rem;
+            background: #f8fafc;
         }
 
         .announcements-container {
@@ -282,46 +293,48 @@
         }
 
         .announcement-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(99, 102, 241, 0.1);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
 
         .announcement-card:hover {
             border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
         }
 
         .announcement-date {
             font-size: 0.75rem;
-            color: #64748b;
+            color: #94a3b8;
             margin-bottom: 0.5rem;
         }
 
         .announcement-title {
             font-size: 1.125rem;
             font-weight: 600;
-            color: #fff;
+            color: #1e293b;
             margin-bottom: 0.5rem;
         }
 
         .announcement-excerpt {
-            color: #94a3b8;
+            color: #64748b;
             line-height: 1.6;
         }
 
         /* Footer */
         .footer {
             padding: 40px 2rem;
-            background: rgba(15, 23, 42, 0.8);
-            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
             text-align: center;
         }
 
         .footer p {
-            color: #64748b;
+            color: #94a3b8;
         }
 
         /* Responsive */
@@ -345,6 +358,11 @@
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .hero-video {
+                margin-left: 1rem;
+                margin-right: 1rem;
             }
         }
     </style>
@@ -392,9 +410,15 @@
             <h1>
                 Kelola Perumahan Anda dengan <span>Citra Gran</span> Management
             </h1>
-            <p>
-                Platform modern untuk manajemen perumahan yang efisien. Kelola tagihan IPL, laporan warga, karyawan, dan keuangan dalam satu sistem terintegrasi.
-            </p>
+            
+            <!-- Video Section -->
+            <div class="hero-video" style="max-width: 300px">
+                <video autoplay loop muted playsinline >
+                    <source src="{{ asset('videos/video.mp4') }}" type="video/mp4">
+                    Browser Anda tidak mendukung pemutaran video.
+                </video>
+            </div>
+            
             <div class="hero-buttons">
                 @auth
                     @if(auth()->user()->isStaff())
@@ -415,7 +439,7 @@
                     </a>
                     <a href="{{ route('register') }}" class="btn btn-secondary btn-lg">
                         <i class="bi bi-person-plus"></i>
-                        Daftar Gratis
+                        Daftar
                     </a>
                 @endauth
             </div>
@@ -506,7 +530,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>{{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #818cf8; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.</p>
+        <p>{{ date('Y') }} &copy; <a href="https://ghiya.my.id" target="_blank" style="color: #6366f1; text-decoration: none;">Gerrant Hiya</a> | All rights reserved.</p>
     </footer>
 </body>
 </html>
