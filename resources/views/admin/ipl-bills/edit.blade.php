@@ -15,7 +15,7 @@
             <div class="grid grid-2" style="margin-bottom: 1.5rem;">
                 <div class="form-group">
                     <label class="form-label">Warga</label>
-                    <input type="text" class="form-control" value="{{ $iplBill->resident->block_number }} - {{ $iplBill->resident->name }}" disabled style="opacity: 0.7;">
+                    <input type="text" class="form-control" value="{{ $iplBill->resident->block_number }} - {{ $iplBill->resident->name }}" disabled style="background: var(--gray-100);">
                 </div>
 
                 <div class="form-group">
@@ -27,22 +27,22 @@
             <div class="grid grid-2" style="margin-bottom: 1.5rem;">
                 <div class="form-group">
                     <label class="form-label">Periode</label>
-                    <input type="text" class="form-control" value="{{ $iplBill->period_name }}" disabled style="opacity: 0.7;">
+                    <input type="text" class="form-control" value="{{ $iplBill->period_name }}" disabled style="background: var(--gray-100);">
                 </div>
             </div>
 
             <!-- Bill Items -->
-            <h4 style="color: var(--white); margin-bottom: 1rem;">Item Tagihan</h4>
-            <div id="billItems" style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Item Tagihan</h4>
+            <div id="billItems" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
                 @foreach($billingTypes as $index => $type)
                     @php
                         $existingItem = $iplBill->items->firstWhere('billing_type_id', $type->id);
                     @endphp
-                    <div class="bill-item" style="display: grid; grid-template-columns: 2fr 1fr 1fr repeat(2, 1fr); gap: 1rem; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
+                    <div class="bill-item" style="display: grid; grid-template-columns: 2fr 1fr 1fr repeat(2, 1fr); gap: 1rem; align-items: end; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label">{{ $type->name }}</label>
                             <input type="hidden" name="items[{{ $index }}][billing_type_id]" value="{{ $type->id }}">
-                            <input type="text" value="{{ $type->name }}" class="form-control" disabled style="opacity: 0.7;">
+                            <input type="text" value="{{ $type->name }}" class="form-control" disabled style="background: var(--gray-100);">
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label">Jumlah</label>
@@ -66,9 +66,9 @@
                 @endforeach
 
                 <!-- Total -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 2px solid rgba(99, 102, 241, 0.3);">
-                    <span style="font-size: 1.125rem; font-weight: 600; color: var(--white);">Total Tagihan:</span>
-                    <span id="totalAmount" style="font-size: 1.5rem; font-weight: 700; color: var(--primary-light);">Rp 0</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 2px solid var(--primary);">
+                    <span style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary);">Total Tagihan:</span>
+                    <span id="totalAmount" style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">Rp 0</span>
                 </div>
             </div>
 

@@ -60,11 +60,11 @@
 
         <!-- By Category -->
         @if(($byCategory ?? collect())->count() > 0)
-        <h4 style="color: var(--white); margin-bottom: 1rem;">Ringkasan per Kategori</h4>
+        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Ringkasan per Kategori</h4>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
             @foreach($byCategory as $catData)
-                <div style="background: rgba(30, 41, 59, 0.6); padding: 1rem; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.1);">
-                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">{{ $catData['category'] }} ({{ $catData['count'] }})</div>
+                <div style="background: var(--card-bg); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">{{ $catData['category'] }} ({{ $catData['count'] }})</div>
                     <div style="font-size: 1.25rem; font-weight: 700; color: var(--danger);">Rp {{ number_format($catData['total'], 0, ',', '.') }}</div>
                 </div>
             @endforeach
@@ -72,7 +72,7 @@
         @endif
 
         <!-- Expense List -->
-        <h4 style="color: var(--white); margin-bottom: 1rem;">Detail Pengeluaran</h4>
+        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Detail Pengeluaran</h4>
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -87,14 +87,14 @@
                 <tbody>
                     @forelse($expenses as $expense)
                         <tr>
-                            <td>{{ $expense->expense_number }}</td>
+                            <td style="color: var(--text-primary);">{{ $expense->expense_number }}</td>
                             <td>{{ $expense->expense_date->format('d M Y') }}</td>
                             <td><span class="badge badge-info">{{ $expense->category->name ?? '-' }}</span></td>
-                            <td>{{ Str::limit($expense->description, 40) }}</td>
+                            <td style="color: var(--text-secondary);">{{ Str::limit($expense->description, 40) }}</td>
                             <td class="amount negative">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" style="text-align: center; padding: 2rem;">Tidak ada data pengeluaran</td></tr>
+                        <tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">Tidak ada data pengeluaran</td></tr>
                     @endforelse
                 </tbody>
             </table>

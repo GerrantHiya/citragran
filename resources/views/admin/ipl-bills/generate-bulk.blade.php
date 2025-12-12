@@ -15,6 +15,7 @@
                 <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
                     <li><strong>IPL</strong> - Sesuai tarif yang sudah diset per warga</li>
                     <li><strong>Iuran RT</strong> - Sama untuk semua warga</li>
+                    <li><strong>Tunggakan</strong> - Tagihan yang belum lunas dari bulan sebelumnya akan ditampilkan</li>
                 </ul>
                 Jika tagihan untuk periode tersebut sudah ada, maka akan dilewati.
             </div>
@@ -83,19 +84,26 @@
                             <th>Luas Tanah</th>
                             <th>IPL</th>
                             <th>Iuran RT</th>
-                            <th>Total</th>
+                            <th>Tunggakan</th>
+                            <th>Total + Tunggakan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php 
                             $grandTotal = 0; 
+                            $grandTotalWithArrears = 0;
+                            $totalArrears = 0;
                             $rtAmount = $rtFee ? $rtFee->amount : 0;
                         @endphp
                         @foreach($residents as $resident)
                             @php
                                 $iplAmount = $resident->ipl_amount ?? 0;
                                 $total = $iplAmount + $rtAmount;
+                                $arrears = $resident->total_outstanding ?? 0;
+                                $totalWithArrears = $total + $arrears;
                                 $grandTotal += $total;
+                                $grandTotalWithArrears += $totalWithArrears;
+                                $totalArrears += $arrears;
                             @endphp
                             <tr>
                                 <td><strong style="color: var(--primary);">{{ $resident->block_number }}</strong></td>
@@ -109,18 +117,42 @@
                                 </td>
                                 <td class="amount" style="color: var(--text-primary);">Rp {{ number_format($iplAmount, 0, ',', '.') }}</td>
                                 <td class="amount" style="color: var(--text-primary);">Rp {{ number_format($rtAmount, 0, ',', '.') }}</td>
-                                <td class="amount" style="font-weight: 700; color: var(--success);">Rp {{ number_format($total, 0, ',', '.') }}</td>
+                                <td class="amount" style="color: {{ $arrears > 0 ? 'var(--danger)' : 'var(--text-muted)' }}; font-weight: {{ $arrears > 0 ? '600' : '400' }};">
+                                    @if($arrears > 0)
+                                        Rp {{ number_format($arrears, 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="amount" style="font-weight: 700; color: var(--success);">Rp {{ number_format($totalWithArrears, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr style="background: var(--gray-100);">
-                            <td colspan="5" style="text-align: right; font-weight: 700; color: var(--text-primary);">Total Keseluruhan:</td>
-                            <td style="font-size: 1.125rem; font-weight: 700; color: var(--success);">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                            <td colspan="3" style="text-align: right; font-weight: 700; color: var(--text-primary);">Total:</td>
+                            <td style="font-weight: 600; color: var(--text-primary);">Rp {{ number_format($residents->sum('ipl_amount'), 0, ',', '.') }}</td>
+                            <td style="font-weight: 600; color: var(--text-primary);">Rp {{ number_format($rtAmount * $residents->count(), 0, ',', '.') }}</td>
+                            <td style="font-weight: 600; color: var(--danger);">Rp {{ number_format($totalArrears, 0, ',', '.') }}</td>
+                            <td style="font-size: 1.125rem; font-weight: 700; color: var(--success);">Rp {{ number_format($grandTotalWithArrears, 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
+
+            @if($totalArrears > 0)
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--danger);">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <strong>Total Tunggakan: Rp {{ number_format($totalArrears, 0, ',', '.') }}</strong>
+                        <p style="margin: 0; font-size: 0.875rem; opacity: 0.8;">
+                            Terdapat tagihan yang belum lunas dari periode sebelumnya. Tunggakan ini akan terlihat di ringkasan tagihan warga.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--warning);">

@@ -83,24 +83,24 @@
                 <tbody>
                     @forelse($payrolls as $payroll)
                         <tr>
-                            <td><a href="{{ route('admin.payrolls.show', $payroll) }}" style="color: var(--primary-light);">{{ $payroll->payroll_number }}</a></td>
-                            <td>{{ $payroll->employee->name }}</td>
+                            <td><a href="{{ route('admin.payrolls.show', $payroll) }}" style="color: var(--primary);">{{ $payroll->payroll_number }}</a></td>
+                            <td style="color: var(--text-primary);">{{ $payroll->employee->name }}</td>
                             <td>{{ $payroll->period_name }}</td>
-                            <td>Rp {{ number_format($payroll->base_salary, 0, ',', '.') }}</td>
+                            <td style="color: var(--text-primary);">Rp {{ number_format($payroll->base_salary, 0, ',', '.') }}</td>
                             <td class="amount positive">+Rp {{ number_format($payroll->bonus, 0, ',', '.') }}</td>
                             <td class="amount negative">-Rp {{ number_format($payroll->deductions + $payroll->debt_deduction, 0, ',', '.') }}</td>
-                            <td class="amount" style="font-weight: 700;">Rp {{ number_format($payroll->total_amount, 0, ',', '.') }}</td>
+                            <td class="amount" style="font-weight: 700; color: var(--text-primary);">Rp {{ number_format($payroll->total_amount, 0, ',', '.') }}</td>
                             <td>{{ $payroll->payment_date?->format('d M Y') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" style="text-align: center; padding: 2rem;">Tidak ada data penggajian</td></tr>
+                        <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">Tidak ada data penggajian</td></tr>
                     @endforelse
                 </tbody>
                 @if($payrolls->count() > 0)
                 <tfoot>
-                    <tr style="background: rgba(99, 102, 241, 0.1);">
-                        <td colspan="3" style="font-weight: 700; color: var(--white);">Total</td>
-                        <td style="font-weight: 700;">Rp {{ number_format($summary['total_base'], 0, ',', '.') }}</td>
+                    <tr style="background: var(--gray-100);">
+                        <td colspan="3" style="font-weight: 700; color: var(--text-primary);">Total</td>
+                        <td style="font-weight: 700; color: var(--text-primary);">Rp {{ number_format($summary['total_base'], 0, ',', '.') }}</td>
                         <td class="amount positive">+Rp {{ number_format($summary['total_bonus'], 0, ',', '.') }}</td>
                         <td class="amount negative">-Rp {{ number_format($summary['total_deductions'] + $summary['total_debt_deductions'], 0, ',', '.') }}</td>
                         <td style="font-weight: 700; color: var(--warning);">Rp {{ number_format($summary['total_amount'], 0, ',', '.') }}</td>

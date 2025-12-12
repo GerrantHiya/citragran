@@ -60,11 +60,11 @@
 
         <!-- By Payment Method -->
         @if($byMethod->count() > 0)
-        <h4 style="color: var(--white); margin-bottom: 1rem;">Ringkasan per Metode Pembayaran</h4>
+        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Ringkasan per Metode Pembayaran</h4>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
             @foreach($byMethod as $method => $total)
-                <div style="background: rgba(30, 41, 59, 0.6); padding: 1rem; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.1);">
-                    <div style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">
+                <div style="background: var(--card-bg); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">
                         @switch($method)
                             @case('cash') Cash @break
                             @case('transfer') Transfer Bank @break
@@ -79,7 +79,7 @@
         @endif
 
         <!-- Payment List -->
-        <h4 style="color: var(--white); margin-bottom: 1rem;">Detail Pembayaran</h4>
+        <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Detail Pembayaran</h4>
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -95,9 +95,9 @@
                 <tbody>
                     @forelse($payments as $payment)
                         <tr>
-                            <td>{{ $payment->payment_number }}</td>
+                            <td style="color: var(--text-primary);">{{ $payment->payment_number }}</td>
                             <td>{{ $payment->payment_date->format('d M Y') }}</td>
-                            <td>{{ $payment->bill->resident->name ?? '-' }}</td>
+                            <td style="color: var(--text-primary);">{{ $payment->bill->resident->name ?? '-' }}</td>
                             <td>
                                 @if($payment->bill)
                                     <a href="{{ route('admin.ipl-bills.show', $payment->bill) }}" style="color: var(--primary); text-decoration: none;">
@@ -125,8 +125,8 @@
                     @empty
                         <tr>
                             <td colspan="6" style="text-align: center; padding: 2rem;">
-                                <i class="bi bi-inbox" style="font-size: 2rem; color: var(--gray-500);"></i>
-                                <div style="margin-top: 0.5rem; color: var(--gray-400);">Tidak ada data pembayaran</div>
+                                <i class="bi bi-inbox" style="font-size: 2rem; color: var(--gray-400);"></i>
+                                <div style="margin-top: 0.5rem; color: var(--text-muted);">Tidak ada data pembayaran</div>
                             </td>
                         </tr>
                     @endforelse

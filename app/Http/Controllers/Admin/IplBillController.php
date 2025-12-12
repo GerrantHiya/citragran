@@ -251,6 +251,16 @@ class IplBillController extends Controller
             }
 
             try {
+                // Get outstanding amount from previous bills
+                $outstandingAmount = IplBill::where('resident_id', $resident->id)
+                    ->whereIn('status', ['pending', 'partial', 'overdue'])
+                    ->sum(\DB::raw('total_amount - paid_amount'));
+
+                $notes = null;
+                if ($outstandingAmount > 0) {
+                    $notes = 'Tunggakan periode sebelumnya: Rp ' . number_format($outstandingAmount, 0, ',', '.');
+                }
+
                 $bill = IplBill::create([
                     'resident_id' => $resident->id,
                     'bill_number' => IplBill::generateBillNumber($request->year, $request->month),
@@ -258,6 +268,7 @@ class IplBillController extends Controller
                     'year' => $request->year,
                     'total_amount' => $totalAmount,
                     'due_date' => $request->due_date,
+                    'notes' => $notes,
                 ]);
 
                 // Get or create billing type for IPL
