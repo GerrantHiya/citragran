@@ -15,6 +15,7 @@ class Resident extends Model
         'name',
         'block_number',
         'land_area',
+        'ipl_amount',
         'phone',
         'whatsapp',
         'email',
@@ -26,6 +27,7 @@ class Resident extends Model
     protected $casts = [
         'move_in_date' => 'date',
         'land_area' => 'decimal:2',
+        'ipl_amount' => 'decimal:2',
     ];
 
     public function user()
@@ -63,25 +65,5 @@ class Resident extends Model
         return $this->iplBills()
             ->whereIn('status', ['pending', 'partial', 'overdue'])
             ->sum(\DB::raw('total_amount - paid_amount'));
-    }
-
-    /**
-     * Mendapatkan tarif IPL berdasarkan luas tanah warga
-     */
-    public function getIplRateAttribute()
-    {
-        if (!$this->land_area) {
-            return null;
-        }
-        return IplRate::getRateByLandArea($this->land_area);
-    }
-
-    /**
-     * Mendapatkan besaran IPL bulanan
-     */
-    public function getIplAmountAttribute()
-    {
-        $rate = $this->ipl_rate;
-        return $rate ? $rate->ipl_amount : 0;
     }
 }

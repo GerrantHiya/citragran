@@ -13,7 +13,7 @@
             <div>
                 <strong>Informasi:</strong> Fitur ini akan membuat tagihan bulanan untuk semua warga aktif.
                 <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
-                    <li><strong>IPL</strong> - Berbeda tiap warga berdasarkan luas tanah</li>
+                    <li><strong>IPL</strong> - Sesuai tarif yang sudah diset per warga</li>
                     <li><strong>Iuran RT</strong> - Sama untuk semua warga</li>
                 </ul>
                 Jika tagihan untuk periode tersebut sudah ada, maka akan dilewati.
@@ -73,7 +73,7 @@
             </div>
 
             <!-- Tarif IPL per Warga -->
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-house"></i> IPL per Warga (Berdasarkan Luas Tanah)</h4>
+            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-house"></i> IPL per Warga</h4>
             <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem;">
                 <table class="table" style="margin-bottom: 0;">
                     <thead>
@@ -81,19 +81,19 @@
                             <th>Blok</th>
                             <th>Nama Warga</th>
                             <th>Luas Tanah</th>
-                            <th>Kategori Tarif</th>
                             <th>IPL</th>
                             <th>Iuran RT</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php $grandTotal = 0; @endphp
+                        @php 
+                            $grandTotal = 0; 
+                            $rtAmount = $rtFee ? $rtFee->amount : 0;
+                        @endphp
                         @foreach($residents as $resident)
                             @php
-                                $iplRate = $resident->ipl_rate;
-                                $iplAmount = $iplRate ? $iplRate->ipl_amount : 0;
-                                $rtAmount = $rtFee ? $rtFee->amount : 0;
+                                $iplAmount = $resident->ipl_amount ?? 0;
                                 $total = $iplAmount + $rtAmount;
                                 $grandTotal += $total;
                             @endphp
@@ -104,14 +104,7 @@
                                     @if($resident->land_area)
                                         {{ number_format($resident->land_area, 0) }} m²
                                     @else
-                                        <span style="color: var(--warning);">Belum diisi</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($iplRate)
-                                        <span class="badge badge-info">{{ $iplRate->name }}</span>
-                                    @else
-                                        <span class="badge badge-warning">Tidak ada tarif</span>
+                                        <span style="color: var(--warning);">-</span>
                                     @endif
                                 </td>
                                 <td class="amount">Rp {{ number_format($iplAmount, 0, ',', '.') }}</td>
@@ -122,7 +115,7 @@
                     </tbody>
                     <tfoot>
                         <tr style="background: rgba(99, 102, 241, 0.1);">
-                            <td colspan="6" style="text-align: right; font-weight: 700; color: var(--white);">Total Keseluruhan:</td>
+                            <td colspan="5" style="text-align: right; font-weight: 700; color: var(--white);">Total Keseluruhan:</td>
                             <td style="font-size: 1.125rem; font-weight: 700; color: var(--success);">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
@@ -151,33 +144,6 @@
                 </a>
             </div>
         </form>
-    </div>
-</div>
-
-<!-- Tarif IPL Reference -->
-<div class="card" style="margin-top: 1.5rem;">
-    <div class="card-header">
-        <h3 class="card-title"><i class="bi bi-info-circle"></i> Referensi Tarif IPL</h3>
-    </div>
-    <div class="card-body" style="padding: 0;">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Kategori</th>
-                    <th>Range Luas Tanah</th>
-                    <th>Tarif IPL/Bulan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($iplRates as $rate)
-                    <tr>
-                        <td><strong>{{ $rate->name }}</strong></td>
-                        <td>{{ $rate->land_area_range }}</td>
-                        <td class="amount" style="font-weight: 600;">Rp {{ number_format($rate->ipl_amount, 0, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
     </div>
 </div>
 @endsection

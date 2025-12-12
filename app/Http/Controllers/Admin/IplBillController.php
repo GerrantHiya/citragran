@@ -206,10 +206,9 @@ class IplBillController extends Controller
     public function generateBulk()
     {
         $residents = Resident::where('status', 'active')->orderBy('block_number')->get();
-        $iplRates = \App\Models\IplRate::active()->orderBy('min_land_area')->get();
         $rtFee = \App\Models\RtFee::getActiveFee();
 
-        return view('admin.ipl-bills.generate-bulk', compact('residents', 'iplRates', 'rtFee'));
+        return view('admin.ipl-bills.generate-bulk', compact('residents', 'rtFee'));
     }
 
     public function storeBulk(Request $request)

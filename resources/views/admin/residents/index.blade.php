@@ -65,7 +65,8 @@
                     <tr>
                         <th>Blok</th>
                         <th>Nama</th>
-                        <th>Kontak</th>
+                        <th>Luas Tanah</th>
+                        <th>IPL/Bulan</th>
                         <th>Status</th>
                         <th>Tunggakan</th>
                         <th>Aksi</th>
@@ -86,17 +87,14 @@
                                 </div>
                             </td>
                             <td>
-                                <div style="font-size: 0.875rem;">
-                                    @if($resident->phone)
-                                        <div><i class="bi bi-telephone" style="color: var(--gray-500);"></i> {{ $resident->phone }}</div>
-                                    @endif
-                                    @if($resident->email)
-                                        <div><i class="bi bi-envelope" style="color: var(--gray-500);"></i> {{ $resident->email }}</div>
-                                    @endif
-                                    @if($resident->whatsapp)
-                                        <div><i class="bi bi-whatsapp" style="color: var(--success);"></i> {{ $resident->whatsapp }}</div>
-                                    @endif
-                                </div>
+                                @if($resident->land_area)
+                                    {{ number_format($resident->land_area, 0) }} m²
+                                @else
+                                    <span style="color: var(--gray-500);">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="amount" style="color: var(--success);">Rp {{ number_format($resident->ipl_amount ?? 0, 0, ',', '.') }}</span>
                             </td>
                             <td>
                                 @if($resident->status === 'active')

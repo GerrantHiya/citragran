@@ -37,6 +37,14 @@
                 <div style="flex: 2; min-width: 300px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <div>
+                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Luas Tanah</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--primary-light); font-weight: 600;">{{ $resident->land_area ? number_format($resident->land_area, 0) . ' m²' : '-' }}</p>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Tarif IPL/Bulan</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--success); font-weight: 600;">Rp {{ number_format($resident->ipl_amount ?? 0, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
                             <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Telepon</label>
                             <p style="margin: 0.25rem 0 0; color: var(--gray-300);">{{ $resident->phone ?: '-' }}</p>
                         </div>

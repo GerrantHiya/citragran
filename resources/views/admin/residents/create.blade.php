@@ -23,12 +23,19 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="land_area">Luas Tanah (m²) <span style="color: var(--danger);">*</span></label>
-                <input type="number" id="land_area" name="land_area" class="form-control" step="0.01" min="0" placeholder="Contoh: 72, 120, 200" value="{{ old('land_area') }}" required>
-                <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-                    <i class="bi bi-info-circle"></i> Luas tanah digunakan untuk menentukan tarif IPL bulanan
-                </p>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label" for="land_area">Luas Tanah (m²) <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="land_area" name="land_area" class="form-control" step="0.01" min="0" placeholder="Contoh: 72, 120, 200" value="{{ old('land_area') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ipl_amount">Tarif IPL per Bulan (Rp) <span style="color: var(--danger);">*</span></label>
+                    <input type="number" id="ipl_amount" name="ipl_amount" class="form-control" step="1000" min="0" placeholder="Contoh: 200000, 500000" value="{{ old('ipl_amount', 0) }}" required>
+                    <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                        <i class="bi bi-info-circle"></i> Tarif IPL bulanan untuk warga ini
+                    </p>
+                </div>
             </div>
 
             <div class="grid grid-2">
