@@ -26,7 +26,7 @@
             <tbody>
                 @forelse($payrolls as $payroll)
                     <tr>
-                        <td><strong style="color: var(--primary-light);">{{ $payroll->payroll_number }}</strong></td>
+                        <td><strong style="color: var(--primary);">{{ $payroll->payroll_number }}</strong></td>
                         <td>{{ $payroll->employee->name }}</td>
                         <td>{{ $payroll->period_name }}</td>
                         <td class="amount">Rp {{ number_format($payroll->total_amount, 0, ',', '.') }}</td>

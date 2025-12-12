@@ -47,7 +47,7 @@
                 <tbody>
                     @forelse($reports as $report)
                         <tr>
-                            <td><a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary-light);">{{ $report->ticket_number }}</a></td>
+                            <td><a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary);">{{ $report->ticket_number }}</a></td>
                             <td>{{ $report->resident->name ?? '-' }}</td>
                             <td>{{ Str::limit($report->subject, 30) }}</td>
                             <td><span class="badge badge-info">{{ ucfirst($report->type) }}</span></td>

@@ -118,7 +118,7 @@
                                 <td>
                                     <div>
                                         <strong>{{ $payment->bill->resident->name ?? '-' }}</strong>
-                                        <div style="font-size: 0.75rem; color: var(--gray-500);">
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">
                                             {{ $payment->bill->resident->block_number ?? '-' }}
                                         </div>
                                     </div>
@@ -164,9 +164,9 @@
                         @forelse($overdueBills as $bill)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--white); text-decoration: none;">
+                                <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--text-primary); text-decoration: none;">
                                         <strong>{{ $bill->resident->name }}</strong>
-                                        <div style="font-size: 0.75rem; color: var(--gray-500);">
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">
                                             {{ $bill->resident->block_number }}
                                         </div>
                                     </a>
@@ -214,7 +214,7 @@
                         @forelse($recentReports as $report)
                             <tr>
                                 <td>
-                                    <a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary-light); text-decoration: none;">
+                                    <a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary); text-decoration: none;">
                                         {{ $report->ticket_number }}
                                     </a>
                                 </td>

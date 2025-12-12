@@ -100,7 +100,7 @@
                                 $totalDue = $residentBills->sum(fn($b) => $b->total_amount - $b->paid_amount);
                             @endphp
                             <tr>
-                                <td><strong style="color: var(--primary-light);">{{ $resident->block_number }}</strong></td>
+                                <td><strong style="color: var(--primary);">{{ $resident->block_number }}</strong></td>
                                 <td>{{ $resident->name }}</td>
                                 <td>
                                     @if($resident->whatsapp || $resident->phone)
@@ -180,7 +180,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                                     Belum ada log notifikasi
                                 </td>
                             </tr>

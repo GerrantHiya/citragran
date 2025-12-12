@@ -76,7 +76,7 @@
                     @forelse($residents as $resident)
                         <tr>
                             <td>
-                                <strong style="color: var(--primary-light);">{{ $resident->block_number }}</strong>
+                                <strong style="color: var(--primary);">{{ $resident->block_number }}</strong>
                             </td>
                             <td>
                                 <div>

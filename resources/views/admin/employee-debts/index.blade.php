@@ -23,7 +23,7 @@
             <tbody>
                 @forelse($debts as $debt)
                     <tr>
-                        <td><strong style="color: var(--primary-light);">{{ $debt->debt_number }}</strong></td>
+                        <td><strong style="color: var(--primary);">{{ $debt->debt_number }}</strong></td>
                         <td>{{ $debt->employee->name }}</td>
                         <td>Rp {{ number_format($debt->amount, 0, ',', '.') }}</td>
                         <td class="amount negative">Rp {{ number_format($debt->remaining_amount, 0, ',', '.') }}</td>

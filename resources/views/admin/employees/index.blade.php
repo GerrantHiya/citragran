@@ -45,7 +45,7 @@
                 <tbody>
                     @forelse($employees as $employee)
                         <tr>
-                            <td><strong style="color: var(--primary-light);">{{ $employee->employee_code }}</strong></td>
+                            <td><strong style="color: var(--primary);">{{ $employee->employee_code }}</strong></td>
                             <td>{{ $employee->name }}</td>
                             <td><span class="badge badge-info">{{ $employee->type_name }}</span></td>
                             <td>Rp {{ number_format($employee->base_salary, 0, ',', '.') }}</td>

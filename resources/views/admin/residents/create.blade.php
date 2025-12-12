@@ -72,8 +72,8 @@
                 <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
                     <input type="checkbox" id="create_account" name="create_account" value="1" style="margin-top: 0.25rem;" {{ old('create_account') ? 'checked' : '' }}>
                     <div>
-                        <label for="create_account" style="font-weight: 600; color: var(--white); cursor: pointer;">Buat Akun Login</label>
-                        <p style="font-size: 0.875rem; color: var(--gray-400); margin: 0.25rem 0 0 0;">
+                        <label for="create_account" style="font-weight: 600; color: var(--text-primary); cursor: pointer;">Buat Akun Login</label>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.25rem 0 0 0;">
                             Buat akun agar warga dapat login untuk melihat tagihan dan membuat laporan
                         </p>
                     </div>
