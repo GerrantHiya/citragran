@@ -32,7 +32,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="ipl_amount">Tarif IPL per Bulan (Rp) <span style="color: var(--danger);">*</span></label>
-                    <input type="number" id="ipl_amount" name="ipl_amount" class="form-control" step="1000" min="0" placeholder="Contoh: 200000, 500000" value="{{ old('ipl_amount', $resident->ipl_amount) }}" required>
+                    <input type="text" id="ipl_amount" name="ipl_amount" class="form-control money-input" placeholder="Contoh: 200,000" value="{{ old('ipl_amount', $resident->ipl_amount) }}" required>
                     <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
                         <i class="bi bi-info-circle"></i> Tarif IPL bulanan untuk warga ini
                     </p>

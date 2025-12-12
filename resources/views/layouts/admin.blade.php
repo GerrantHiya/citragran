@@ -966,6 +966,18 @@
                     <span>Laporan Gaji</span>
                 </a>
             </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Lainnya</div>
+                <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+                    <i class="bi bi-megaphone-fill"></i>
+                    <span>Broadcast Notifikasi</span>
+                </a>
+                <a href="{{ route('admin.settings.billing') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Pengaturan Tagihan</span>
+                </a>
+            </div>
         </nav>
     </aside>
 
@@ -1079,6 +1091,51 @@
                 maximumFractionDigits: 0
             }).format(amount);
         }
+
+        // Format number with thousand separator
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Parse formatted number back to integer
+        function parseFormattedNumber(str) {
+            return parseInt(str.replace(/,/g, '')) || 0;
+        }
+
+        // Auto-format money inputs
+        function initMoneyInputs() {
+            document.querySelectorAll('input[data-money], input.money-input').forEach(input => {
+                // Format on load if has value
+                if (input.value && !input.value.includes(',')) {
+                    const num = parseInt(input.value) || 0;
+                    if (num > 0) {
+                        input.value = formatNumber(num);
+                    }
+                }
+
+                // Format on input
+                input.addEventListener('input', function(e) {
+                    let value = this.value.replace(/[^0-9]/g, '');
+                    if (value) {
+                        this.value = formatNumber(parseInt(value));
+                    }
+                });
+
+                // Store raw value in hidden field or data attribute before form submit
+                const form = input.closest('form');
+                if (form && !form.dataset.moneyHandled) {
+                    form.dataset.moneyHandled = 'true';
+                    form.addEventListener('submit', function() {
+                        this.querySelectorAll('input[data-money], input.money-input').forEach(inp => {
+                            inp.value = parseFormattedNumber(inp.value);
+                        });
+                    });
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initMoneyInputs);
     </script>
     @stack('scripts')
 </body>

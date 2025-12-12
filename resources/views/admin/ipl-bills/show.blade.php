@@ -35,6 +35,10 @@
                             Pending
                         </span>
                 @endswitch
+                <a href="{{ route('admin.pdf.bill-detail', $iplBill) }}" class="btn btn-success btn-sm" target="_blank">
+                    <i class="bi bi-printer"></i>
+                    Cetak
+                </a>
                 @if($iplBill->status !== 'paid')
                     <a href="{{ route('admin.ipl-bills.edit', $iplBill) }}" class="btn btn-secondary btn-sm">
                         <i class="bi bi-pencil"></i>

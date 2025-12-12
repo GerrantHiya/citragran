@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\PayrollController;
 use App\Http\Controllers\Admin\EmployeeDebtController;
 use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\FinancialReportController as AdminFinancialReportController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\PdfExportController;
 use App\Http\Controllers\Resident\DashboardController as ResidentDashboardController;
 use App\Http\Controllers\Resident\BillController;
 use App\Http\Controllers\Resident\ReportController as ResidentReportController;
@@ -89,6 +92,21 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::post('financial-reports/{financialReport}/unpublish', [AdminFinancialReportController::class, 'unpublish'])->name('financial-reports.unpublish');
     Route::put('financial-reports/{financialReport}/summary', [AdminFinancialReportController::class, 'updateSummary'])->name('financial-reports.update-summary');
     Route::resource('financial-reports', AdminFinancialReportController::class)->only(['index', 'show']);
+
+    // Settings
+    Route::get('settings/billing', [SettingController::class, 'billingSettings'])->name('settings.billing');
+    Route::put('settings/rt-fee', [SettingController::class, 'updateRtFee'])->name('settings.rt-fee');
+
+    // Notifications / Broadcast
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/send-whatsapp', [NotificationController::class, 'sendWhatsAppReminder'])->name('notifications.send-whatsapp');
+    Route::post('notifications/send-email', [NotificationController::class, 'sendEmailReminder'])->name('notifications.send-email');
+
+    // PDF Exports
+    Route::get('pdf/income-report', [PdfExportController::class, 'incomeReport'])->name('pdf.income-report');
+    Route::get('pdf/expense-report', [PdfExportController::class, 'expenseReport'])->name('pdf.expense-report');
+    Route::get('pdf/payroll-report', [PdfExportController::class, 'payrollReport'])->name('pdf.payroll-report');
+    Route::get('pdf/bill/{bill}', [PdfExportController::class, 'billDetail'])->name('pdf.bill-detail');
 });
 
 // Resident Routes

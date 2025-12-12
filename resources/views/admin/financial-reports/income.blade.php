@@ -6,9 +6,14 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Laporan Pendapatan IPL</h3>
-        <a href="{{ route('admin.financial-reports.index') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{{ route('admin.pdf.income-report', request()->query()) }}" class="btn btn-success" target="_blank">
+                <i class="bi bi-file-earmark-pdf"></i> Download PDF
+            </a>
+            <a href="{{ route('admin.financial-reports.index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+        </div>
     </div>
     <div class="card-body">
         <!-- Filter -->
