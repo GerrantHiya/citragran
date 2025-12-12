@@ -41,19 +41,38 @@
             <h3 class="card-title"><i class="bi bi-megaphone"></i> Kirim Pengingat Tagihan</h3>
         </div>
         <div class="card-body">
+            <!-- Fonnte Status -->
+            @if(isset($fontteConfigured) && $fontteConfigured)
+                <div class="alert alert-success" style="margin-bottom: 1.5rem;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <strong>Fonnte WhatsApp API Aktif</strong> - Pesan akan dikirim secara otomatis ke WhatsApp warga.
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-warning" style="margin-bottom: 1.5rem;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <div>
+                        <strong>Fonnte belum dikonfigurasi</strong> - Tambahkan <code>FONNTE_TOKEN</code> di file .env untuk mengaktifkan pengiriman WhatsApp otomatis.
+                    </div>
+                </div>
+            @endif
+
             <div class="alert alert-info" style="margin-bottom: 1.5rem;">
                 <i class="bi bi-info-circle-fill"></i>
                 <div>
-                    <strong>Informasi:</strong> Pengingat akan dikirim ke semua warga yang memiliki tagihan belum lunas.
+                    <strong>Informasi:</strong> Pengingat akan dikirim ke semua warga yang memiliki tagihan belum lunas ({{ $residentsWithUnpaid->count() }} warga).
                 </div>
             </div>
 
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                 <form action="{{ route('admin.notifications.send-whatsapp') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-success" onclick="return confirm('Kirim pengingat WhatsApp ke {{ $residentsWithUnpaid->count() }} warga?')">
+                    <button type="submit" class="btn btn-success" 
+                            onclick="return confirm('Kirim pengingat WhatsApp ke {{ $residentsWithUnpaid->count() }} warga?\n\nPesan akan dikirim langsung ke nomor WhatsApp yang terdaftar.')"
+                            {{ (!isset($fontteConfigured) || !$fontteConfigured) ? 'disabled' : '' }}>
                         <i class="bi bi-whatsapp"></i>
-                        Ingatkan via WhatsApp ({{ $residentsWithUnpaid->count() }} warga)
+                        Kirim via WhatsApp ({{ $residentsWithUnpaid->count() }} warga)
                     </button>
                 </form>
 
@@ -61,17 +80,31 @@
                     @csrf
                     <button type="submit" class="btn btn-primary" onclick="return confirm('Kirim pengingat Email ke {{ $residentsWithUnpaid->count() }} warga?')">
                         <i class="bi bi-envelope"></i>
-                        Ingatkan via Email ({{ $residentsWithUnpaid->count() }} warga)
+                        Kirim via Email ({{ $residentsWithUnpaid->count() }} warga)
                     </button>
                 </form>
             </div>
 
-            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
-                <p style="margin: 0; color: var(--warning); font-size: 0.875rem;">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <strong>Catatan:</strong> Fitur ini masih dalam tahap infrastruktur. Implementasi pengiriman aktual memerlukan integrasi dengan API WhatsApp dan SMTP Server.
-                </p>
-            </div>
+            @if(session('success'))
+                <div class="alert alert-success" style="margin-top: 1.5rem;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="alert alert-warning" style="margin-top: 1.5rem;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    {{ session('warning') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger" style="margin-top: 1.5rem;">
+                    <i class="bi bi-x-circle-fill"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
         </div>
     </div>
 

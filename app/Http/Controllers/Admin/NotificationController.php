@@ -7,11 +7,19 @@ use App\Mail\BillReminderMail;
 use App\Models\IplBill;
 use App\Models\NotificationLog;
 use App\Models\Resident;
+use App\Services\FontteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class NotificationController extends Controller
 {
+    protected FontteService $fontteService;
+
+    public function __construct(FontteService $fontteService)
+    {
+        $this->fontteService = $fontteService;
+    }
+
     /**
      * Halaman broadcast notifikasi
      */
@@ -30,26 +38,60 @@ class NotificationController extends Controller
             ->take(20)
             ->get();
 
-        return view('admin.notifications.index', compact('unpaidBills', 'residentsWithUnpaid', 'recentLogs'));
+        // Check if Fonnte is configured
+        $fontteConfigured = $this->fontteService->isConfigured();
+
+        return view('admin.notifications.index', compact(
+            'unpaidBills', 
+            'residentsWithUnpaid', 
+            'recentLogs',
+            'fontteConfigured'
+        ));
     }
 
     /**
-     * Kirim reminder via WhatsApp
+     * Kirim reminder via WhatsApp menggunakan Fonnte API
      */
     public function sendWhatsAppReminder(Request $request)
     {
+        // Check if Fonnte is configured
+        if (!$this->fontteService->isConfigured()) {
+            return back()->with('error', 'Token Fonnte belum dikonfigurasi. Silakan tambahkan FONNTE_TOKEN di file .env');
+        }
+
         $residents = $this->getTargetResidents($request);
         $sent = 0;
         $failed = 0;
+        $skipped = 0;
 
         foreach ($residents as $resident) {
+            // Skip jika tidak ada nomor WA
             if (!$resident->whatsapp && !$resident->phone) {
-                $failed++;
+                $skipped++;
+                
+                NotificationLog::create([
+                    'resident_id' => $resident->id,
+                    'type' => 'whatsapp',
+                    'subject' => 'Pengingat Tagihan IPL',
+                    'message' => 'Dilewati: Tidak ada nomor WhatsApp',
+                    'recipient' => '-',
+                    'status' => 'skipped',
+                    'metadata' => json_encode([
+                        'reason' => 'No WhatsApp number',
+                    ]),
+                ]);
+                
                 continue;
             }
 
             $whatsappNumber = $resident->whatsapp ?: $resident->phone;
             $message = $this->generateReminderMessage($resident);
+
+            // Kirim via Fonnte API
+            $response = $this->fontteService->sendMessage($whatsappNumber, $message);
+
+            // Determine status from response
+            $success = isset($response['status']) && $response['status'] === true;
 
             // Log the notification
             NotificationLog::create([
@@ -58,17 +100,42 @@ class NotificationController extends Controller
                 'subject' => 'Pengingat Tagihan IPL',
                 'message' => $message,
                 'recipient' => $whatsappNumber,
-                'status' => 'pending', // Manual WA - need integration with WA API
+                'status' => $success ? 'sent' : 'failed',
                 'metadata' => json_encode([
                     'total_outstanding' => $resident->total_outstanding,
                     'unpaid_bills' => $resident->unpaid_bills->count(),
+                    'fonnte_response' => $response,
                 ]),
             ]);
 
-            $sent++;
+            if ($success) {
+                $sent++;
+            } else {
+                $failed++;
+            }
         }
 
-        return back()->with('success', "Berhasil menyiapkan {$sent} reminder WhatsApp. {$failed} dilewati (tidak ada nomor WA). Silakan kirim manual melalui WA.");
+        // Prepare result message
+        $messages = [];
+        if ($sent > 0) {
+            $messages[] = "✅ Berhasil mengirim {$sent} pesan WhatsApp";
+        }
+        if ($failed > 0) {
+            $messages[] = "❌ Gagal mengirim {$failed} pesan";
+        }
+        if ($skipped > 0) {
+            $messages[] = "⏭️ Dilewati {$skipped} warga (tidak ada nomor WA)";
+        }
+
+        $resultMessage = implode('. ', $messages);
+
+        if ($sent > 0 && $failed === 0) {
+            return back()->with('success', $resultMessage);
+        } elseif ($sent > 0 && $failed > 0) {
+            return back()->with('warning', $resultMessage);
+        } else {
+            return back()->with('error', $resultMessage ?: 'Tidak ada pesan yang dikirim.');
+        }
     }
 
     /**
@@ -159,17 +226,28 @@ class NotificationController extends Controller
         $unpaidBills = $resident->unpaid_bills;
         $totalOutstanding = $resident->total_outstanding;
 
-        $message = "Yth. Bapak/Ibu {$resident->name},\n\n";
+        $message = "🏠 *PENGINGAT TAGIHAN IPL*\n";
+        $message .= "Perumahan Citra Gran\n";
+        $message .= "━━━━━━━━━━━━━━━━\n\n";
+        
+        $message .= "Yth. Bapak/Ibu *{$resident->name}*\n";
+        $message .= "Blok: *{$resident->block_number}*\n\n";
+        
         $message .= "Kami ingin mengingatkan bahwa Anda memiliki tagihan IPL yang belum dibayar:\n\n";
 
         foreach ($unpaidBills as $bill) {
             $remaining = $bill->total_amount - $bill->paid_amount;
-            $message .= "- {$bill->period_name}: Rp " . number_format($remaining, 0, ',', '.') . "\n";
+            $message .= "📋 *{$bill->period_name}*\n";
+            $message .= "    Sisa: Rp " . number_format($remaining, 0, ',', '.') . "\n";
         }
 
-        $message .= "\nTotal: Rp " . number_format($totalOutstanding, 0, ',', '.') . "\n\n";
+        $message .= "\n━━━━━━━━━━━━━━━━\n";
+        $message .= "💰 *Total Tunggakan:*\n";
+        $message .= "*Rp " . number_format($totalOutstanding, 0, ',', '.') . "*\n\n";
+        
         $message .= "Mohon segera melakukan pembayaran.\n\n";
-        $message .= "Terima kasih,\nManajemen Perumahan Citra Gran";
+        $message .= "Terima kasih 🙏\n";
+        $message .= "_Manajemen Perumahan Citra Gran_";
 
         return $message;
     }
