@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="page-header">
-    <a href="{{ route('resident.reports.index') }}" style="color: var(--gray-400); text-decoration: none; font-size: 0.875rem;">
+    <a href="{{ route('resident.reports.index') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem;">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>
     <h1 class="page-title">Buat Laporan Baru</h1>

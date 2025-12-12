@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="page-header">
-    <a href="{{ route('resident.bills.index') }}" style="color: var(--gray-400); text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+    <a href="{{ route('resident.bills.index') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>
     <h1 class="page-title">{{ $bill->bill_number }}</h1>
@@ -36,36 +36,36 @@
         </div>
         <div class="card-body">
             <div style="display: grid; gap: 1rem;">
-                <div style="display: flex; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
-                    <span style="color: var(--gray-500);">Jatuh Tempo</span>
-                    <span style="{{ $bill->is_overdue ? 'color: var(--danger);' : 'color: var(--white);' }} font-weight: 600;">
+                <div style="display: flex; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                    <span style="color: var(--text-muted);">Jatuh Tempo</span>
+                    <span style="{{ $bill->is_overdue ? 'color: var(--danger);' : 'color: var(--text-primary);' }} font-weight: 600;">
                         {{ $bill->due_date->format('d M Y') }}
                     </span>
                 </div>
 
                 @if($bill->status === 'paid')
-                    <div style="display: flex; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
-                        <span style="color: var(--gray-500);">Tanggal Lunas</span>
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                        <span style="color: var(--text-muted);">Tanggal Lunas</span>
                         <span style="color: var(--success); font-weight: 600;">{{ $bill->paid_date?->format('d M Y') }}</span>
                     </div>
                 @endif
             </div>
 
             <!-- Bill Items -->
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem; font-size: 1rem;">Rincian Tagihan</h4>
+            <h4 style="color: var(--text-primary); margin: 1.5rem 0 1rem; font-size: 1rem;">Rincian Tagihan</h4>
             <table class="table">
                 <tbody>
                     @foreach($bill->items as $item)
                         <tr>
-                            <td>{{ $item->billingType->name }}</td>
-                            <td style="text-align: right; font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
+                            <td style="color: var(--text-primary);">{{ $item->billingType->name }}</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--text-primary);">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
-                    <tr style="background: rgba(99, 102, 241, 0.1);">
-                        <td style="font-weight: 700; color: var(--white);">Total</td>
-                        <td style="text-align: right; font-weight: 700; font-size: 1.125rem; color: var(--white);">
+                    <tr style="background: var(--gray-100);">
+                        <td style="font-weight: 700; color: var(--text-primary);">Total</td>
+                        <td style="text-align: right; font-weight: 700; font-size: 1.125rem; color: var(--text-primary);">
                             Rp {{ number_format($bill->total_amount, 0, ',', '.') }}
                         </td>
                     </tr>
@@ -77,7 +77,7 @@
                             </td>
                         </tr>
                         <tr style="background: rgba(239, 68, 68, 0.1);">
-                            <td style="font-weight: 700; color: var(--white);">Sisa Tagihan</td>
+                            <td style="font-weight: 700; color: var(--text-primary);">Sisa Tagihan</td>
                             <td style="text-align: right; font-weight: 700; font-size: 1.125rem; color: var(--danger);">
                                 Rp {{ number_format($bill->remaining_amount, 0, ',', '.') }}
                             </td>
@@ -123,7 +123,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 2rem;">
+                            <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                                 Belum ada pembayaran
                             </td>
                         </tr>
@@ -137,9 +137,9 @@
 @if($bill->status !== 'paid')
     <div class="card" style="margin-top: 1.5rem;">
         <div class="card-body" style="text-align: center;">
-            <h4 style="color: var(--white); margin-bottom: 0.5rem;">Cara Pembayaran</h4>
-            <p style="color: var(--gray-400); margin-bottom: 1rem;">Silakan lakukan pembayaran ke kantor Management Perumahan atau transfer ke rekening yang telah ditentukan.</p>
-            <p style="color: var(--gray-500); font-size: 0.875rem;">
+            <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">Cara Pembayaran</h4>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">Silakan lakukan pembayaran ke kantor Management Perumahan atau transfer ke rekening yang telah ditentukan.</p>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">
                 Untuk informasi lebih lanjut, hubungi admin perumahan.
             </p>
         </div>

@@ -23,8 +23,8 @@
                             {{ strtoupper(substr($resident->name, 0, 1)) }}
                         </div>
                         <div>
-                            <h2 style="font-size: 1.5rem; margin: 0; color: var(--white);">{{ $resident->name }}</h2>
-                            <p style="color: var(--primary-light); margin: 0.25rem 0;">Blok {{ $resident->block_number }}</p>
+                            <h2 style="font-size: 1.5rem; margin: 0; color: var(--text-primary);">{{ $resident->name }}</h2>
+                            <p style="color: var(--primary); margin: 0.25rem 0;">Blok {{ $resident->block_number }}</p>
                             @if($resident->status === 'active')
                                 <span class="badge badge-success">Aktif</span>
                             @else
@@ -37,28 +37,28 @@
                 <div style="flex: 2; min-width: 300px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Luas Tanah</label>
-                            <p style="margin: 0.25rem 0 0; color: var(--primary-light); font-weight: 600;">{{ $resident->land_area ? number_format($resident->land_area, 0) . ' m²' : '-' }}</p>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Luas Tanah</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--primary); font-weight: 600;">{{ $resident->land_area ? number_format($resident->land_area, 0) . ' m²' : '-' }}</p>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Tarif IPL/Bulan</label>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Tarif IPL/Bulan</label>
                             <p style="margin: 0.25rem 0 0; color: var(--success); font-weight: 600;">Rp {{ number_format($resident->ipl_amount ?? 0, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Telepon</label>
-                            <p style="margin: 0.25rem 0 0; color: var(--gray-300);">{{ $resident->phone ?: '-' }}</p>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Telepon</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--text-secondary);">{{ $resident->phone ?: '-' }}</p>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">WhatsApp</label>
-                            <p style="margin: 0.25rem 0 0; color: var(--gray-300);">{{ $resident->whatsapp ?: '-' }}</p>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">WhatsApp</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--text-secondary);">{{ $resident->whatsapp ?: '-' }}</p>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Email</label>
-                            <p style="margin: 0.25rem 0 0; color: var(--gray-300);">{{ $resident->email ?: '-' }}</p>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Email</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--text-secondary);">{{ $resident->email ?: '-' }}</p>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase;">Tanggal Masuk</label>
-                            <p style="margin: 0.25rem 0 0; color: var(--gray-300);">{{ $resident->move_in_date?->format('d M Y') ?: '-' }}</p>
+                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Tanggal Masuk</label>
+                            <p style="margin: 0.25rem 0 0; color: var(--text-secondary);">{{ $resident->move_in_date?->format('d M Y') ?: '-' }}</p>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                         </div>
                         <div>
                             <p style="margin: 0; color: var(--success); font-weight: 600;">Terhubung</p>
-                            <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">{{ $resident->user->email }}</p>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">{{ $resident->user->email }}</p>
                         </div>
                     </div>
                     <form action="{{ route('admin.residents.unlink-user', $resident) }}" method="POST" onsubmit="return confirm('Yakin ingin memutus hubungan akun ini?')">
@@ -128,7 +128,7 @@
                     </div>
                     <div>
                         <p style="margin: 0; color: var(--warning); font-weight: 600;">Belum Terhubung</p>
-                        <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">Warga ini belum memiliki akun login</p>
+                        <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">Warga ini belum memiliki akun login</p>
                     </div>
                 </div>
 
@@ -149,7 +149,7 @@
                         </button>
                     </form>
                 @else
-                    <p style="color: var(--gray-500); font-size: 0.875rem; margin: 0;">
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">
                         <i class="bi bi-info-circle"></i> Tidak ada akun warga yang belum terhubung.
                     </p>
                 @endif
@@ -177,7 +177,7 @@
                             @forelse($resident->iplBills->take(10) as $bill)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--primary-light); text-decoration: none;">
+                                        <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--primary); text-decoration: none;">
                                             {{ $bill->period_name }}
                                         </a>
                                     </td>
@@ -230,7 +230,7 @@
                             @forelse($resident->reports->take(10) as $report)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary-light); text-decoration: none;">
+                                        <a href="{{ route('admin.reports.show', $report) }}" style="color: var(--primary); text-decoration: none;">
                                             {{ $report->ticket_number }}
                                         </a>
                                     </td>

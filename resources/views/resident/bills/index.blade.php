@@ -51,8 +51,8 @@
                         <div class="card-body">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
                                 <div>
-                                    <h4 style="color: var(--white); font-size: 1.125rem; font-weight: 600;">{{ $bill->period_name }}</h4>
-                                    <p style="color: var(--gray-500); font-size: 0.75rem;">{{ $bill->bill_number }}</p>
+                                    <h4 style="color: var(--text-primary); font-size: 1.125rem; font-weight: 600;">{{ $bill->period_name }}</h4>
+                                    <p style="color: var(--text-muted); font-size: 0.75rem;">{{ $bill->bill_number }}</p>
                                 </div>
                                 @switch($bill->status)
                                     @case('paid')
@@ -69,25 +69,25 @@
                                 @endswitch
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid rgba(99, 102, 241, 0.1);">
-                                <span style="color: var(--gray-500);">Total</span>
-                                <span style="color: var(--white); font-weight: 600;">Rp {{ number_format($bill->total_amount, 0, ',', '.') }}</span>
+                            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted);">Total</span>
+                                <span style="color: var(--text-primary); font-weight: 600;">Rp {{ number_format($bill->total_amount, 0, ',', '.') }}</span>
                             </div>
                             
                             @if($bill->status !== 'paid')
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid rgba(99, 102, 241, 0.1);">
-                                    <span style="color: var(--gray-500);">Sisa Bayar</span>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid var(--border-color);">
+                                    <span style="color: var(--text-muted);">Sisa Bayar</span>
                                     <span class="amount negative">Rp {{ number_format($bill->remaining_amount, 0, ',', '.') }}</span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid rgba(99, 102, 241, 0.1);">
-                                    <span style="color: var(--gray-500);">Jatuh Tempo</span>
-                                    <span style="{{ $bill->is_overdue ? 'color: var(--danger);' : 'color: var(--gray-300);' }}">
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid var(--border-color);">
+                                    <span style="color: var(--text-muted);">Jatuh Tempo</span>
+                                    <span style="{{ $bill->is_overdue ? 'color: var(--danger);' : 'color: var(--text-secondary);' }}">
                                         {{ $bill->due_date->format('d M Y') }}
                                     </span>
                                 </div>
                             @else
-                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid rgba(99, 102, 241, 0.1);">
-                                    <span style="color: var(--gray-500);">Tgl. Lunas</span>
+                                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-top: 1px solid var(--border-color);">
+                                    <span style="color: var(--text-muted);">Tgl. Lunas</span>
                                     <span style="color: var(--success);">{{ $bill->paid_date?->format('d M Y') ?? '-' }}</span>
                                 </div>
                             @endif
@@ -96,8 +96,8 @@
                 </a>
             @empty
                 <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                    <i class="bi bi-receipt" style="font-size: 4rem; color: var(--gray-500);"></i>
-                    <h3 style="color: var(--gray-300); margin-top: 1rem;">Belum ada tagihan</h3>
+                    <i class="bi bi-receipt" style="font-size: 4rem; color: var(--gray-400);"></i>
+                    <h3 style="color: var(--text-secondary); margin-top: 1rem;">Belum ada tagihan</h3>
                 </div>
             @endforelse
         </div>

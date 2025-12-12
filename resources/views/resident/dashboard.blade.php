@@ -63,7 +63,7 @@
                     @forelse($unpaidBills->take(5) as $bill)
                         <tr>
                             <td>
-                                <a href="{{ route('resident.bills.show', $bill) }}" style="color: var(--primary-light); text-decoration: none;">
+                                <a href="{{ route('resident.bills.show', $bill) }}" style="color: var(--primary); text-decoration: none;">
                                     {{ $bill->period_name }}
                                 </a>
                             </td>
@@ -113,7 +113,7 @@
                     @forelse($activeReports as $report)
                         <tr>
                             <td>
-                                <a href="{{ route('resident.reports.show', $report) }}" style="color: var(--primary-light); text-decoration: none;">
+                                <a href="{{ route('resident.reports.show', $report) }}" style="color: var(--primary); text-decoration: none;">
                                     {{ $report->ticket_number }}
                                 </a>
                             </td>
@@ -156,12 +156,12 @@
     </div>
     <div class="card-body">
         @foreach($announcements as $announcement)
-            <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
+            <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                    <h4 style="font-size: 1rem; color: var(--white); font-weight: 600;">{{ $announcement->title }}</h4>
-                    <span style="font-size: 0.75rem; color: var(--gray-500);">{{ $announcement->published_at?->format('d M Y') ?? $announcement->created_at->format('d M Y') }}</span>
+                    <h4 style="font-size: 1rem; color: var(--text-primary); font-weight: 600;">{{ $announcement->title }}</h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ $announcement->published_at?->format('d M Y') ?? $announcement->created_at->format('d M Y') }}</span>
                 </div>
-                <p style="color: var(--gray-400); font-size: 0.875rem; line-height: 1.6;">
+                <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">
                     {{ Str::limit(strip_tags($announcement->content), 150) }}
                 </p>
             </div>
@@ -193,7 +193,7 @@
                 @foreach($financialReports as $report)
                     <tr>
                         <td>
-                            <a href="{{ route('resident.financial-reports.show', $report) }}" style="color: var(--primary-light); text-decoration: none;">
+                            <a href="{{ route('resident.financial-reports.show', $report) }}" style="color: var(--primary); text-decoration: none;">
                                 {{ $report->period_name }}
                             </a>
                         </td>
