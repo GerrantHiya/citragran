@@ -242,10 +242,10 @@
                 @csrf
                 
                 <div class="form-group">
-                    <label class="form-label" for="email">Email</label>
+                    <label class="form-label" for="login">No. WhatsApp / Email</label>
                     <div class="input-group">
-                        <i class="bi bi-envelope input-icon"></i>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com" value="{{ old('email') }}" required autofocus>
+                        <i class="bi bi-whatsapp input-icon"></i>
+                        <input type="text" id="login" name="login" class="form-control" placeholder="08123xxx atau email@example.com" value="{{ old('login') }}" required autofocus>
                     </div>
                 </div>
 

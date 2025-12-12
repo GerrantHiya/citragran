@@ -219,13 +219,14 @@
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com" value="{{ old('email') }}" required>
+                        <label class="form-label" for="phone">No. WhatsApp <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="phone" name="phone" class="form-control" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}" required>
+                        <p class="form-hint">Digunakan untuk login</p>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="phone">No. Telepon</label>
-                        <input type="text" id="phone" name="phone" class="form-control" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}">
+                        <label class="form-label" for="email">Email (Opsional)</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com" value="{{ old('email') }}">
                     </div>
                 </div>
 

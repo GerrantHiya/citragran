@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\BillReminderMail;
 use App\Models\IplBill;
 use App\Models\NotificationLog;
 use App\Models\Resident;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationController extends Controller
 {
@@ -49,14 +51,14 @@ class NotificationController extends Controller
             $whatsappNumber = $resident->whatsapp ?: $resident->phone;
             $message = $this->generateReminderMessage($resident);
 
-            // Log the notification (actual sending would be implemented with WA API)
+            // Log the notification
             NotificationLog::create([
                 'resident_id' => $resident->id,
                 'type' => 'whatsapp',
                 'subject' => 'Pengingat Tagihan IPL',
                 'message' => $message,
                 'recipient' => $whatsappNumber,
-                'status' => 'pending', // Will be updated when actually sent
+                'status' => 'pending', // Manual WA - need integration with WA API
                 'metadata' => json_encode([
                     'total_outstanding' => $resident->total_outstanding,
                     'unpaid_bills' => $resident->unpaid_bills->count(),
@@ -66,7 +68,7 @@ class NotificationController extends Controller
             $sent++;
         }
 
-        return back()->with('success', "Berhasil mengirim {$sent} reminder WhatsApp. {$failed} gagal (tidak ada nomor WA).");
+        return back()->with('success', "Berhasil menyiapkan {$sent} reminder WhatsApp. {$failed} dilewati (tidak ada nomor WA). Silakan kirim manual melalui WA.");
     }
 
     /**
@@ -77,6 +79,7 @@ class NotificationController extends Controller
         $residents = $this->getTargetResidents($request);
         $sent = 0;
         $failed = 0;
+        $errors = [];
 
         foreach ($residents as $resident) {
             if (!$resident->email) {
@@ -84,29 +87,51 @@ class NotificationController extends Controller
                 continue;
             }
 
-            $message = $this->generateReminderMessage($resident);
+            try {
+                // Send actual email
+                Mail::to($resident->email)->send(new BillReminderMail($resident));
 
-            // Log the notification (actual sending would be implemented with Mail)
-            NotificationLog::create([
-                'resident_id' => $resident->id,
-                'type' => 'email',
-                'subject' => 'Pengingat Tagihan IPL - Perumahan Citra Gran',
-                'message' => $message,
-                'recipient' => $resident->email,
-                'status' => 'pending', // Will be updated when actually sent
-                'metadata' => json_encode([
-                    'total_outstanding' => $resident->total_outstanding,
-                    'unpaid_bills' => $resident->unpaid_bills->count(),
-                ]),
-            ]);
+                // Log success
+                NotificationLog::create([
+                    'resident_id' => $resident->id,
+                    'type' => 'email',
+                    'subject' => 'Pengingat Tagihan IPL - Perumahan Citra Gran',
+                    'message' => 'Email template sent',
+                    'recipient' => $resident->email,
+                    'status' => 'sent',
+                    'metadata' => json_encode([
+                        'total_outstanding' => $resident->total_outstanding,
+                        'unpaid_bills' => $resident->unpaid_bills->count(),
+                    ]),
+                ]);
 
-            // TODO: Implement actual email sending
-            // Mail::to($resident->email)->send(new BillReminderMail($resident));
+                $sent++;
+            } catch (\Exception $e) {
+                // Log failure
+                NotificationLog::create([
+                    'resident_id' => $resident->id,
+                    'type' => 'email',
+                    'subject' => 'Pengingat Tagihan IPL - Perumahan Citra Gran',
+                    'message' => 'Failed: ' . $e->getMessage(),
+                    'recipient' => $resident->email,
+                    'status' => 'failed',
+                    'metadata' => json_encode([
+                        'error' => $e->getMessage(),
+                    ]),
+                ]);
 
-            $sent++;
+                $errors[] = $resident->email . ': ' . $e->getMessage();
+                $failed++;
+            }
         }
 
-        return back()->with('success', "Berhasil mengirim {$sent} reminder Email. {$failed} gagal (tidak ada email).");
+        if ($sent > 0 && $failed === 0) {
+            return back()->with('success', "Berhasil mengirim {$sent} email reminder.");
+        } elseif ($sent > 0 && $failed > 0) {
+            return back()->with('warning', "Berhasil mengirim {$sent} email. {$failed} gagal.");
+        } else {
+            return back()->with('error', "Gagal mengirim email. " . implode(', ', $errors));
+        }
     }
 
     /**
@@ -127,7 +152,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * Generate reminder message
+     * Generate reminder message for WhatsApp
      */
     private function generateReminderMessage(Resident $resident)
     {

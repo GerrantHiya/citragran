@@ -19,16 +19,35 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'login' => 'required|string',
             'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $loginInput = $request->login;
+        $password = $request->password;
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        // Determine if login is email or phone/whatsapp
+        $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        // Try to find user by email or phone
+        $user = User::where($field, $loginInput)->first();
+
+        // If not found by phone field, try whatsapp field as alternative
+        if (!$user && $field === 'phone') {
+            // Normalize phone number (remove spaces, dashes)
+            $normalizedPhone = preg_replace('/[^0-9+]/', '', $loginInput);
+            
+            // Check in users table (phone field)
+            $user = User::where('phone', $normalizedPhone)
+                ->orWhere('phone', ltrim($normalizedPhone, '0'))
+                ->orWhere('phone', '0' . ltrim($normalizedPhone, '+62'))
+                ->orWhere('phone', '+62' . ltrim($normalizedPhone, '0'))
+                ->first();
+        }
+
+        if ($user && Hash::check($password, $user->password)) {
+            Auth::login($user, $request->remember);
             $request->session()->regenerate();
-
-            $user = Auth::user();
 
             if ($user->isStaff()) {
                 return redirect()->intended(route('admin.dashboard'));
@@ -38,8 +57,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
+            'login' => 'No. WhatsApp/Email atau password salah.',
+        ])->onlyInput('login');
     }
 
     public function logout(Request $request)
@@ -59,18 +78,28 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // Check for duplicate email first with friendly message
-        $existingUser = User::where('email', $request->email)->first();
-        if ($existingUser) {
+        // Check for duplicate phone number first
+        $existingUserByPhone = User::where('phone', $request->phone)->first();
+        if ($existingUserByPhone) {
             return back()->withErrors([
-                'email' => 'Email ini sudah terdaftar. Silakan gunakan email lain atau login dengan akun yang sudah ada.',
+                'phone' => 'No. WhatsApp ini sudah terdaftar. Silakan gunakan nomor lain atau login dengan akun yang sudah ada.',
             ])->withInput($request->except('password', 'password_confirmation'));
+        }
+
+        // Check for duplicate email if provided
+        if ($request->email) {
+            $existingUserByEmail = User::where('email', $request->email)->first();
+            if ($existingUserByEmail) {
+                return back()->withErrors([
+                    'email' => 'Email ini sudah terdaftar. Silakan gunakan email lain.',
+                ])->withInput($request->except('password', 'password_confirmation'));
+            }
         }
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255',
             'password' => 'required|min:8|confirmed',
         ]);
 
