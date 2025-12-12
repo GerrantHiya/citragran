@@ -24,6 +24,20 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <label class="form-label" for="land_area">Luas Tanah (m²) <span style="color: var(--danger);">*</span></label>
+                <input type="number" id="land_area" name="land_area" class="form-control" step="0.01" min="0" placeholder="Contoh: 72, 120, 200" value="{{ old('land_area', $resident->land_area) }}" required>
+                @if($resident->ipl_rate)
+                    <p style="font-size: 0.75rem; color: var(--success); margin-top: 0.25rem;">
+                        <i class="bi bi-check-circle"></i> Kategori: {{ $resident->ipl_rate->name }} - Rp {{ number_format($resident->ipl_rate->ipl_amount, 0, ',', '.') }}/bulan
+                    </p>
+                @else
+                    <p style="font-size: 0.75rem; color: var(--warning); margin-top: 0.25rem;">
+                        <i class="bi bi-exclamation-triangle"></i> Belum ada tarif IPL yang sesuai
+                    </p>
+                @endif
+            </div>
+
             <div class="grid grid-2">
                 <div class="form-group">
                     <label class="form-label" for="phone">No. Telepon</label>

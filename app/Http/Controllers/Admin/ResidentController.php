@@ -52,6 +52,7 @@ class ResidentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'block_number' => 'required|string|max:50|unique:residents',
+            'land_area' => 'required|numeric|min:0',
             'phone' => 'nullable|string|max:20',
             'whatsapp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
@@ -63,7 +64,7 @@ class ResidentController extends Controller
         ]);
 
         $resident = Resident::create($request->only([
-            'name', 'block_number', 'phone', 'whatsapp', 'email', 'address', 'move_in_date'
+            'name', 'block_number', 'land_area', 'phone', 'whatsapp', 'email', 'address', 'move_in_date'
         ]));
 
         // Link existing user account if selected
@@ -129,6 +130,7 @@ class ResidentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'block_number' => 'required|string|max:50|unique:residents,block_number,' . $resident->id,
+            'land_area' => 'required|numeric|min:0',
             'phone' => 'nullable|string|max:20',
             'whatsapp' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
@@ -138,7 +140,7 @@ class ResidentController extends Controller
         ]);
 
         $resident->update($request->only([
-            'name', 'block_number', 'phone', 'whatsapp', 'email', 'address', 'status', 'move_in_date'
+            'name', 'block_number', 'land_area', 'phone', 'whatsapp', 'email', 'address', 'status', 'move_in_date'
         ]));
 
         // Update linked user if exists

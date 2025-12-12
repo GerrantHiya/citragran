@@ -59,6 +59,7 @@ class DatabaseSeeder extends Seeder
 
         // Call other seeders
         $this->call([
+            BillingRatesSeeder::class,
             ResidentSeeder::class,
             EmployeeSeeder::class,
         ]);

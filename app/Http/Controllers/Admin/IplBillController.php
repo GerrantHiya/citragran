@@ -206,9 +206,10 @@ class IplBillController extends Controller
     public function generateBulk()
     {
         $residents = Resident::where('status', 'active')->orderBy('block_number')->get();
-        $billingTypes = BillingType::active()->get();
+        $iplRates = \App\Models\IplRate::active()->orderBy('min_land_area')->get();
+        $rtFee = \App\Models\RtFee::getActiveFee();
 
-        return view('admin.ipl-bills.generate-bulk', compact('residents', 'billingTypes'));
+        return view('admin.ipl-bills.generate-bulk', compact('residents', 'iplRates', 'rtFee'));
     }
 
     public function storeBulk(Request $request)
@@ -217,17 +218,14 @@ class IplBillController extends Controller
             'month' => 'required|integer|between:1,12',
             'year' => 'required|integer|min:2020',
             'due_date' => 'required|date',
-            'fixed_items' => 'required|array',
-            'fixed_items.*.billing_type_id' => 'required|exists:billing_types,id',
-            'fixed_items.*.amount' => 'required|numeric|min:0',
         ]);
 
         $residents = Resident::where('status', 'active')->get();
+        $rtFee = \App\Models\RtFee::getActiveFee();
+        $rtAmount = $rtFee ? $rtFee->amount : 0;
+        
         $created = 0;
         $skipped = 0;
-
-        // Calculate fixed items total (same for all residents)
-        $fixedTotal = collect($request->fixed_items)->sum('amount');
 
         foreach ($residents as $resident) {
             // Check if bill already exists
@@ -241,22 +239,15 @@ class IplBillController extends Controller
                 continue;
             }
 
-            // Get water data for this resident
-            $waterData = $request->water[$resident->id] ?? null;
-            $waterAmount = 0;
-            $waterUsage = 0;
-            $meterPrev = null;
-            $meterCurrent = null;
+            // Get IPL amount based on land area
+            $iplAmount = $resident->ipl_amount;
+            $totalAmount = $iplAmount + $rtAmount;
 
-            if ($waterData) {
-                $meterPrev = $waterData['meter_prev'] ?? 0;
-                $meterCurrent = $waterData['meter_current'] ?? 0;
-                $pricePerUnit = $waterData['price_per_unit'] ?? 0;
-                $waterUsage = max(0, $meterCurrent - $meterPrev);
-                $waterAmount = $waterUsage * $pricePerUnit;
+            // Skip if no land area defined and no IPL rate
+            if ($totalAmount <= 0) {
+                $skipped++;
+                continue;
             }
-
-            $totalAmount = $fixedTotal + $waterAmount;
 
             $bill = IplBill::create([
                 'resident_id' => $resident->id,
@@ -267,24 +258,34 @@ class IplBillController extends Controller
                 'due_date' => $request->due_date,
             ]);
 
-            // Create fixed bill items
-            foreach ($request->fixed_items as $item) {
+            // Get or create billing type for IPL
+            $iplBillingType = BillingType::firstOrCreate(
+                ['code' => 'ipl'],
+                ['name' => 'IPL (Iuran Pengelolaan Lingkungan)', 'default_amount' => 0]
+            );
+
+            // Get or create billing type for Iuran RT
+            $rtBillingType = BillingType::firstOrCreate(
+                ['code' => 'rt'],
+                ['name' => 'Iuran RT', 'default_amount' => $rtAmount]
+            );
+
+            // Create IPL bill item
+            if ($iplAmount > 0) {
                 IplBillItem::create([
                     'ipl_bill_id' => $bill->id,
-                    'billing_type_id' => $item['billing_type_id'],
-                    'amount' => $item['amount'],
+                    'billing_type_id' => $iplBillingType->id,
+                    'amount' => $iplAmount,
+                    'notes' => 'Luas tanah: ' . ($resident->land_area ?? 0) . ' m²',
                 ]);
             }
 
-            // Create water bill item if applicable
-            if ($waterData && $waterAmount > 0) {
+            // Create Iuran RT bill item
+            if ($rtAmount > 0) {
                 IplBillItem::create([
                     'ipl_bill_id' => $bill->id,
-                    'billing_type_id' => $waterData['billing_type_id'],
-                    'amount' => $waterAmount,
-                    'meter_previous' => $meterPrev,
-                    'meter_current' => $meterCurrent,
-                    'usage' => $waterUsage,
+                    'billing_type_id' => $rtBillingType->id,
+                    'amount' => $rtAmount,
                 ]);
             }
 
@@ -292,6 +293,6 @@ class IplBillController extends Controller
         }
 
         return redirect()->route('admin.ipl-bills.index')
-            ->with('success', "Berhasil membuat {$created} tagihan. {$skipped} tagihan dilewati (sudah ada).");
+            ->with('success', "Berhasil membuat {$created} tagihan. {$skipped} tagihan dilewati (sudah ada/tidak memenuhi syarat).");
     }
 }

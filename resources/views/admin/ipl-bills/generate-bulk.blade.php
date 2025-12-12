@@ -5,14 +5,17 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Generate Tagihan IPL untuk Semua Warga</h3>
+        <h3 class="card-title">Generate Tagihan IPL + RT untuk Semua Warga</h3>
     </div>
     <div class="card-body">
         <div class="alert alert-info" style="margin-bottom: 1.5rem;">
             <i class="bi bi-info-circle-fill"></i>
             <div>
-                <strong>Informasi:</strong> Fitur ini akan membuat tagihan IPL untuk semua warga aktif. 
-                Tagihan tetap (Kebersihan, Security, Sampah) sama untuk semua warga, sedangkan meteran air berbeda tiap warga.
+                <strong>Informasi:</strong> Fitur ini akan membuat tagihan bulanan untuk semua warga aktif.
+                <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
+                    <li><strong>IPL</strong> - Berbeda tiap warga berdasarkan luas tanah</li>
+                    <li><strong>Iuran RT</strong> - Sama untuk semua warga</li>
+                </ul>
                 Jika tagihan untuk periode tersebut sudah ada, maka akan dilewati.
             </div>
         </div>
@@ -47,79 +50,93 @@
                 <input type="date" id="due_date" name="due_date" class="form-control" value="{{ date('Y-m-d', strtotime('+30 days')) }}" required>
             </div>
 
-            <!-- Fixed Bill Items (Same for all) -->
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-pin-angle"></i> Tagihan Tetap (Sama untuk Semua Warga)</h4>
+            <!-- Iuran RT (Sama untuk Semua) -->
+            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-people"></i> Iuran RT (Sama untuk Semua Warga)</h4>
             <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                @foreach($billingTypes as $index => $type)
-                    @if($type->code !== 'water')
-                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">{{ $type->name }}</label>
-                                <input type="hidden" name="fixed_items[{{ $type->id }}][billing_type_id]" value="{{ $type->id }}">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Jumlah</label>
-                                <input type="number" name="fixed_items[{{ $type->id }}][amount]" class="form-control fixed-amount" value="{{ $type->default_amount }}" required>
-                            </div>
+                @if($rtFee)
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: var(--white);">{{ $rtFee->name }}</strong>
+                            <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">{{ $rtFee->description }}</p>
                         </div>
-                    @endif
-                @endforeach
-                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 2px solid rgba(99, 102, 241, 0.3);">
-                    <span style="font-size: 1rem; font-weight: 600; color: var(--gray-400);">Subtotal Tagihan Tetap:</span>
-                    <span id="fixedTotal" style="font-size: 1.25rem; font-weight: 700; color: var(--primary-light);">Rp 0</span>
-                </div>
+                        <div style="text-align: right;">
+                            <input type="hidden" name="rt_fee_amount" value="{{ $rtFee->amount }}">
+                            <span style="font-size: 1.25rem; font-weight: 700; color: var(--primary-light);">Rp {{ number_format($rtFee->amount, 0, ',', '.') }}</span>
+                            <p style="margin: 0; color: var(--gray-500); font-size: 0.75rem;">per warga</p>
+                        </div>
+                    </div>
+                @else
+                    <p style="color: var(--warning); margin: 0;">
+                        <i class="bi bi-exclamation-triangle"></i> Belum ada tarif iuran RT yang aktif.
+                    </p>
+                @endif
             </div>
 
-            <!-- Water Meter for Each Resident -->
-            @php $waterType = $billingTypes->firstWhere('code', 'water'); @endphp
-            @if($waterType)
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-droplet"></i> Meteran Air PAM (Per Warga)</h4>
+            <!-- Tarif IPL per Warga -->
+            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-house"></i> IPL per Warga (Berdasarkan Luas Tanah)</h4>
             <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem;">
                 <table class="table" style="margin-bottom: 0;">
                     <thead>
                         <tr>
                             <th>Blok</th>
                             <th>Nama Warga</th>
-                            <th>Meter Lama</th>
-                            <th>Meter Baru</th>
-                            <th>Pemakaian</th>
-                            <th>Harga/m³</th>
-                            <th>Total Air</th>
+                            <th>Luas Tanah</th>
+                            <th>Kategori Tarif</th>
+                            <th>IPL</th>
+                            <th>Iuran RT</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($residents as $ri => $resident)
+                        @php $grandTotal = 0; @endphp
+                        @foreach($residents as $resident)
+                            @php
+                                $iplRate = $resident->ipl_rate;
+                                $iplAmount = $iplRate ? $iplRate->ipl_amount : 0;
+                                $rtAmount = $rtFee ? $rtFee->amount : 0;
+                                $total = $iplAmount + $rtAmount;
+                                $grandTotal += $total;
+                            @endphp
                             <tr>
                                 <td><strong style="color: var(--primary-light);">{{ $resident->block_number }}</strong></td>
                                 <td>{{ $resident->name }}</td>
                                 <td>
-                                    <input type="hidden" name="water[{{ $resident->id }}][billing_type_id]" value="{{ $waterType->id }}">
-                                    <input type="number" name="water[{{ $resident->id }}][meter_prev]" class="form-control meter-prev" data-resident="{{ $resident->id }}" placeholder="0" value="0" style="width: 100px;">
+                                    @if($resident->land_area)
+                                        {{ number_format($resident->land_area, 0) }} m²
+                                    @else
+                                        <span style="color: var(--warning);">Belum diisi</span>
+                                    @endif
                                 </td>
                                 <td>
-                                    <input type="number" name="water[{{ $resident->id }}][meter_current]" class="form-control meter-current" data-resident="{{ $resident->id }}" placeholder="0" value="0" style="width: 100px;">
+                                    @if($iplRate)
+                                        <span class="badge badge-info">{{ $iplRate->name }}</span>
+                                    @else
+                                        <span class="badge badge-warning">Tidak ada tarif</span>
+                                    @endif
                                 </td>
-                                <td id="usage-{{ $resident->id }}" style="font-weight: 600; color: var(--info);">0 m³</td>
-                                <td>
-                                    <input type="number" name="water[{{ $resident->id }}][price_per_unit]" class="form-control price-unit" data-resident="{{ $resident->id }}" value="{{ $waterType->default_amount }}" style="width: 100px;">
-                                </td>
-                                <td id="water-total-{{ $resident->id }}" class="amount" style="font-weight: 700; color: var(--success);">Rp 0</td>
+                                <td class="amount">Rp {{ number_format($iplAmount, 0, ',', '.') }}</td>
+                                <td class="amount">Rp {{ number_format($rtAmount, 0, ',', '.') }}</td>
+                                <td class="amount" style="font-weight: 700; color: var(--success);">Rp {{ number_format($total, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr style="background: rgba(99, 102, 241, 0.1);">
+                            <td colspan="6" style="text-align: right; font-weight: 700; color: var(--white);">Total Keseluruhan:</td>
+                            <td style="font-size: 1.125rem; font-weight: 700; color: var(--success);">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
-            @endif
 
-            <div style="background: rgba(99, 102, 241, 0.1); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: rgba(245, 158, 11, 0.1); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--warning);">
+                    <i class="bi bi-people-fill" style="font-size: 1.5rem;"></i>
                     <div>
-                        <strong style="color: var(--white); font-size: 1rem;"><i class="bi bi-people-fill"></i> {{ $residents->count() }} Warga Aktif</strong>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--gray-400);">Akan dibuat tagihan untuk semua warga di atas</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 0.875rem; color: var(--gray-400);">Total Keseluruhan (Estimasi)</div>
-                        <div id="grandTotal" style="font-size: 1.75rem; font-weight: 700; color: var(--success);">Rp 0</div>
+                        <strong>{{ $residents->count() }} Warga Aktif</strong>
+                        <p style="margin: 0; font-size: 0.875rem; opacity: 0.8;">
+                            Akan dibuat tagihan untuk semua warga di atas
+                        </p>
                     </div>
                 </div>
             </div>
@@ -137,50 +154,30 @@
     </div>
 </div>
 
-<script>
-    function calculateTotals() {
-        // Calculate fixed items total
-        let fixedTotal = 0;
-        document.querySelectorAll('.fixed-amount').forEach(input => {
-            fixedTotal += parseFloat(input.value) || 0;
-        });
-        document.getElementById('fixedTotal').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(fixedTotal);
-
-        // Calculate water totals for each resident
-        let totalWater = 0;
-        @foreach($residents as $resident)
-        (function() {
-            const residentId = {{ $resident->id }};
-            const prevEl = document.querySelector('.meter-prev[data-resident="' + residentId + '"]');
-            const currEl = document.querySelector('.meter-current[data-resident="' + residentId + '"]');
-            const priceEl = document.querySelector('.price-unit[data-resident="' + residentId + '"]');
-            
-            if (prevEl && currEl && priceEl) {
-                const prev = parseFloat(prevEl.value) || 0;
-                const curr = parseFloat(currEl.value) || 0;
-                const price = parseFloat(priceEl.value) || 0;
-                const usage = Math.max(0, curr - prev);
-                const waterTotal = usage * price;
-                
-                document.getElementById('usage-' + residentId).textContent = usage + ' m³';
-                document.getElementById('water-total-' + residentId).textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(waterTotal);
-                totalWater += waterTotal;
-            }
-        })();
-        @endforeach
-
-        // Calculate grand total (fixed * residents + total water)
-        const residentCount = {{ $residents->count() }};
-        const grandTotal = (fixedTotal * residentCount) + totalWater;
-        document.getElementById('grandTotal').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(grandTotal);
-    }
-
-    // Add event listeners to all inputs
-    document.querySelectorAll('.fixed-amount, .meter-prev, .meter-current, .price-unit').forEach(input => {
-        input.addEventListener('input', calculateTotals);
-    });
-
-    // Initial calculation
-    calculateTotals();
-</script>
+<!-- Tarif IPL Reference -->
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        <h3 class="card-title"><i class="bi bi-info-circle"></i> Referensi Tarif IPL</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kategori</th>
+                    <th>Range Luas Tanah</th>
+                    <th>Tarif IPL/Bulan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($iplRates as $rate)
+                    <tr>
+                        <td><strong>{{ $rate->name }}</strong></td>
+                        <td>{{ $rate->land_area_range }}</td>
+                        <td class="amount" style="font-weight: 600;">Rp {{ number_format($rate->ipl_amount, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection
