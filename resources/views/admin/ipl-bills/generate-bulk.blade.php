@@ -51,18 +51,18 @@
             </div>
 
             <!-- Iuran RT (Sama untuk Semua) -->
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-people"></i> Iuran RT (Sama untuk Semua Warga)</h4>
-            <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+            <h4 style="color: var(--text-primary); margin: 1.5rem 0 1rem;"><i class="bi bi-people"></i> Iuran RT Bulanan</h4>
+            <div style="background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
                 @if($rtFee)
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong style="color: var(--white);">{{ $rtFee->name }}</strong>
-                            <p style="margin: 0; color: var(--gray-400); font-size: 0.875rem;">{{ $rtFee->description }}</p>
+                            <strong style="color: var(--text-primary);">{{ $rtFee->name }}</strong>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">{{ $rtFee->description }}</p>
                         </div>
                         <div style="text-align: right;">
                             <input type="hidden" name="rt_fee_amount" value="{{ $rtFee->amount }}">
-                            <span style="font-size: 1.25rem; font-weight: 700; color: var(--primary-light);">Rp {{ number_format($rtFee->amount, 0, ',', '.') }}</span>
-                            <p style="margin: 0; color: var(--gray-500); font-size: 0.75rem;">per warga</p>
+                            <span style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">Rp {{ number_format($rtFee->amount, 0, ',', '.') }}</span>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.75rem;">per warga</p>
                         </div>
                     </div>
                 @else
@@ -73,8 +73,8 @@
             </div>
 
             <!-- Tarif IPL per Warga -->
-            <h4 style="color: var(--white); margin: 1.5rem 0 1rem;"><i class="bi bi-house"></i> IPL per Warga</h4>
-            <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="color: var(--text-primary); margin: 1.5rem 0 1rem;"><i class="bi bi-house"></i> IPL per Warga</h4>
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
                 <table class="table" style="margin-bottom: 0;">
                     <thead>
                         <tr>
@@ -98,31 +98,31 @@
                                 $grandTotal += $total;
                             @endphp
                             <tr>
-                                <td><strong style="color: var(--primary-light);">{{ $resident->block_number }}</strong></td>
-                                <td>{{ $resident->name }}</td>
-                                <td>
+                                <td><strong style="color: var(--primary);">{{ $resident->block_number }}</strong></td>
+                                <td style="color: var(--text-primary);">{{ $resident->name }}</td>
+                                <td style="color: var(--text-secondary);">
                                     @if($resident->land_area)
                                         {{ number_format($resident->land_area, 0) }} m²
                                     @else
                                         <span style="color: var(--warning);">-</span>
                                     @endif
                                 </td>
-                                <td class="amount">Rp {{ number_format($iplAmount, 0, ',', '.') }}</td>
-                                <td class="amount">Rp {{ number_format($rtAmount, 0, ',', '.') }}</td>
+                                <td class="amount" style="color: var(--text-primary);">Rp {{ number_format($iplAmount, 0, ',', '.') }}</td>
+                                <td class="amount" style="color: var(--text-primary);">Rp {{ number_format($rtAmount, 0, ',', '.') }}</td>
                                 <td class="amount" style="font-weight: 700; color: var(--success);">Rp {{ number_format($total, 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
-                        <tr style="background: rgba(99, 102, 241, 0.1);">
-                            <td colspan="5" style="text-align: right; font-weight: 700; color: var(--white);">Total Keseluruhan:</td>
+                        <tr style="background: var(--gray-100);">
+                            <td colspan="5" style="text-align: right; font-weight: 700; color: var(--text-primary);">Total Keseluruhan:</td>
                             <td style="font-size: 1.125rem; font-weight: 700; color: var(--success);">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
 
-            <div style="background: rgba(245, 158, 11, 0.1); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
+            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 1rem; margin-top: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--warning);">
                     <i class="bi bi-people-fill" style="font-size: 1.5rem;"></i>
                     <div>

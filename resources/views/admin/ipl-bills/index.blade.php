@@ -6,16 +6,10 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Daftar Tagihan IPL</h3>
-        <div style="display: flex; gap: 0.5rem;">
-            <a href="{{ route('admin.ipl-bills.generate-bulk') }}" class="btn btn-secondary">
-                <i class="bi bi-lightning-fill"></i>
-                Generate Bulk
-            </a>
-            <a href="{{ route('admin.ipl-bills.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i>
-                Tambah Tagihan
-            </a>
-        </div>
+        <a href="{{ route('admin.ipl-bills.generate-bulk') }}" class="btn btn-primary">
+            <i class="bi bi-lightning-fill"></i>
+            Generate Tagihan Bulk
+        </a>
     </div>
     <div class="card-body">
         <!-- Filter -->
@@ -81,7 +75,7 @@
                     @forelse($bills as $bill)
                         <tr>
                             <td>
-                                <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--primary-light); text-decoration: none; font-weight: 600;">
+                                <a href="{{ route('admin.ipl-bills.show', $bill) }}" style="color: var(--primary); text-decoration: none; font-weight: 600;">
                                     {{ $bill->bill_number }}
                                 </a>
                             </td>
@@ -146,7 +140,7 @@
                                         <i class="bi bi-receipt"></i>
                                     </div>
                                     <div class="empty-state-title">Belum ada tagihan</div>
-                                    <div class="empty-state-text">Klik tombol "Tambah Tagihan" untuk membuat tagihan baru.</div>
+                                    <div class="empty-state-text">Klik tombol "Generate Tagihan Bulk" untuk membuat tagihan baru.</div>
                                 </div>
                             </td>
                         </tr>

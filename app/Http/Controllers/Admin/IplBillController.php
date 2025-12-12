@@ -225,6 +225,7 @@ class IplBillController extends Controller
         
         $created = 0;
         $skipped = 0;
+        $duplicateResidents = [];
 
         foreach ($residents as $resident) {
             // Check if bill already exists
@@ -235,6 +236,7 @@ class IplBillController extends Controller
 
             if ($exists) {
                 $skipped++;
+                $duplicateResidents[] = $resident->block_number . ' - ' . $resident->name;
                 continue;
             }
 
@@ -248,50 +250,70 @@ class IplBillController extends Controller
                 continue;
             }
 
-            $bill = IplBill::create([
-                'resident_id' => $resident->id,
-                'bill_number' => IplBill::generateBillNumber($request->year, $request->month),
-                'month' => $request->month,
-                'year' => $request->year,
-                'total_amount' => $totalAmount,
-                'due_date' => $request->due_date,
-            ]);
-
-            // Get or create billing type for IPL
-            $iplBillingType = BillingType::firstOrCreate(
-                ['code' => 'ipl'],
-                ['name' => 'IPL (Iuran Pengelolaan Lingkungan)', 'default_amount' => 0]
-            );
-
-            // Get or create billing type for Iuran RT
-            $rtBillingType = BillingType::firstOrCreate(
-                ['code' => 'rt'],
-                ['name' => 'Iuran RT', 'default_amount' => $rtAmount]
-            );
-
-            // Create IPL bill item
-            if ($iplAmount > 0) {
-                IplBillItem::create([
-                    'ipl_bill_id' => $bill->id,
-                    'billing_type_id' => $iplBillingType->id,
-                    'amount' => $iplAmount,
-                    'notes' => 'Luas tanah: ' . ($resident->land_area ?? 0) . ' m²',
+            try {
+                $bill = IplBill::create([
+                    'resident_id' => $resident->id,
+                    'bill_number' => IplBill::generateBillNumber($request->year, $request->month),
+                    'month' => $request->month,
+                    'year' => $request->year,
+                    'total_amount' => $totalAmount,
+                    'due_date' => $request->due_date,
                 ]);
-            }
 
-            // Create Iuran RT bill item
-            if ($rtAmount > 0) {
-                IplBillItem::create([
-                    'ipl_bill_id' => $bill->id,
-                    'billing_type_id' => $rtBillingType->id,
-                    'amount' => $rtAmount,
-                ]);
-            }
+                // Get or create billing type for IPL
+                $iplBillingType = BillingType::firstOrCreate(
+                    ['code' => 'ipl'],
+                    ['name' => 'IPL (Iuran Pengelolaan Lingkungan)', 'default_amount' => 0]
+                );
 
-            $created++;
+                // Get or create billing type for Iuran RT
+                $rtBillingType = BillingType::firstOrCreate(
+                    ['code' => 'rt'],
+                    ['name' => 'Iuran RT', 'default_amount' => $rtAmount]
+                );
+
+                // Create IPL bill item
+                if ($iplAmount > 0) {
+                    IplBillItem::create([
+                        'ipl_bill_id' => $bill->id,
+                        'billing_type_id' => $iplBillingType->id,
+                        'amount' => $iplAmount,
+                        'notes' => 'Luas tanah: ' . ($resident->land_area ?? 0) . ' m²',
+                    ]);
+                }
+
+                // Create Iuran RT bill item
+                if ($rtAmount > 0) {
+                    IplBillItem::create([
+                        'ipl_bill_id' => $bill->id,
+                        'billing_type_id' => $rtBillingType->id,
+                        'amount' => $rtAmount,
+                    ]);
+                }
+
+                $created++;
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                // Handle duplicate entry - bill already exists for this resident/month/year
+                $skipped++;
+                $duplicateResidents[] = $resident->block_number . ' - ' . $resident->name;
+                continue;
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Handle other database errors
+                if (str_contains($e->getMessage(), 'Duplicate entry')) {
+                    $skipped++;
+                    $duplicateResidents[] = $resident->block_number . ' - ' . $resident->name;
+                    continue;
+                }
+                throw $e; // Re-throw if it's not a duplicate error
+            }
+        }
+
+        $message = "Berhasil membuat {$created} tagihan.";
+        if ($skipped > 0) {
+            $message .= " {$skipped} tagihan dilewati (sudah ada/tidak memenuhi syarat).";
         }
 
         return redirect()->route('admin.ipl-bills.index')
-            ->with('success', "Berhasil membuat {$created} tagihan. {$skipped} tagihan dilewati (sudah ada/tidak memenuhi syarat).");
+            ->with('success', $message);
     }
 }

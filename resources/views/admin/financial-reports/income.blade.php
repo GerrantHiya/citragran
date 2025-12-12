@@ -99,9 +99,13 @@
                             <td>{{ $payment->payment_date->format('d M Y') }}</td>
                             <td>{{ $payment->bill->resident->name ?? '-' }}</td>
                             <td>
-                                <a href="{{ route('admin.ipl-bills.show', $payment->bill_id) }}" style="color: var(--primary-light); text-decoration: none;">
-                                    {{ $payment->bill->bill_number ?? '-' }}
-                                </a>
+                                @if($payment->bill)
+                                    <a href="{{ route('admin.ipl-bills.show', $payment->bill) }}" style="color: var(--primary); text-decoration: none;">
+                                        {{ $payment->bill->bill_number }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
                             </td>
                             <td>
                                 @switch($payment->payment_method)
